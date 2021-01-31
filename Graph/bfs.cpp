@@ -60,6 +60,7 @@ public:
 		visited[src] = true;
 		while (!q.empty()) {
 			T node = q.front();
+			cout << node << " ";
 			q.pop();
 			visited[node] = true;
 			for (auto nbr : l[node]) {
@@ -75,5 +76,14 @@ public:
 int main()
 {
 	boost;
+	Graph<int> g;
+	g.addEdge(1, 2);
+	g.addEdge(0, 1);
+	g.addEdge(2, 3);
+	g.addEdge(0, 3);
+	g.addEdge(3, 4);
+	g.addEdge(4, 5);
+	g.bfs(0);
+
 	return 0;
 }
