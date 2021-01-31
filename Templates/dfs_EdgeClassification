@@ -1,0 +1,46 @@
+#define MAXN 1000000
+int start[MAXN];
+int finish[MAXN];
+
+int timer = 0 ;
+int anycycle = 0 ;
+vector<int> adj[MAXN];
+
+ void initialize()
+ {
+ 	for(int i=0;i<MAXN;i++)
+ 	{
+ 		start[i] = -1;
+ 		finish[i] = -1;
+ 	}
+ }
+
+void dfs_EdgeClassification(int node)
+{
+	start[node] = timer++;
+
+	for(int i=0;i<adj[node].size();i++)
+	{
+		int child = adj[node][i];
+
+		if(start[child] == -1)
+		{	
+			
+			dfs_EdgeClassification(child);  // Not visited before . Tree edge
+		}
+
+		else
+		{
+			if(finish[child] == -1)  // then this is ancestor that called and waiting us to finish . Then cycle . Back Edge
+				anycycle = 1;  
+
+			else if(start[node] < start[child]) // then you are my descendant 
+				 ; // forward edge 
+			else
+			 	; // cross edge 
+		}
+	}
+
+	finish[node] = timer++;
+}
+
