@@ -76,6 +76,6 @@ int main()
 	g.addEdge("C", "D", 30, 1);
 	g.addEdge("B", "D", 40, 1);
 
-	g.printList();
+	//g.printList();
 	return 0;
 }
