@@ -44,51 +44,46 @@ ll power(ll a, ll b) //a is base, b is exponent
 
 // Before sub : check for out of bounds , long long , floating point exception(division by zero) ,indexes , 0 , 1
 
+
+void dfs(int node, vector<int> &time, int cur_time, vector<int> adj[], vector<int> &vis) {
+
+	vis[node] = true;
+
+	for (auto nbr : adj[node]) {
+		if (!vis[nbr]) {
+			dfs(nbr, time, cur_time + 1, adj, vis);
+		}
+	}
+
+	time[node] = max(time[node], cur_time);
+}
 int main()
 {
 	boost;
-	int t;
-	cin >> t;
-	while (t--) {
-		int V;
-		cin >> V;
-		vector<vector<int>>graph(V);
+	int V, E;
+	cin >> V >> E;
 
-		for (int i = 0; i < V; i++) {
-			for (int j = 0; j < V; j++) {
-				int x;
-				cin >> x;
-				graph[i].push_back(x);
-			}
-		}
+	vector<int> adj[V + 1];
 
-		vector<vector<int>>dist(graph);
-
-		for (int k = 0; k < V; k++) {
-			for (int i = 0; i < V; i++) {
-				for (int j = 0; j < V; j++) {
-					dist[i][j] = min(dist[i][j], dist[i][k] + dist[k][j]);
-				}
-			}
-		}
-
-		for (int i = 0; i < V; i++) {
-			for (int j = 0; j < V; j++) {
-				if (dist[i][j] == 10000000)cout << "INF ";
-				else cout << dist[i][j] << " ";
-			}
-			cout << endl;
-		}
-
-		// Negative Cycle detection
-
-		for (int i = 0; i < V; i++) {
-			if (dist[i][i] < 0) {
-				cout << "Negative Weight Cycle found";
-				break;
-			}
-
-		}
+	for (int i = 0; i < E; i++) {
+		int u, v;
+		cin >> u >> v;
+		adj[u].push_back(v);
 	}
+
+	vector<int> time(V + 1, 1);
+	vector<int> vis(V + 1);
+	stack<int> s;
+	for (int i = 1; i <= V; i++) {
+		if (!vis[i]) {
+			dfs(i, time, 1, adj, vis);
+		}
+
+	}
+
+	for (int i = 1; i <= V; i++) {
+		cout << time[i] << " ";
+	}
+
 	return 0;
 }
