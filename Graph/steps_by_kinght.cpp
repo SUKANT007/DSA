@@ -52,69 +52,69 @@ public:
 	int ans = INT_MAX;
 	int vis[1005][1005];
 
-	int bfs(int srcx, int srcy, int destx, int desty, int N) {
+	// int bfs(int srcx, int srcy, int destx, int desty, int N) {
 
 
-		for (int i = 0; i <= N; i++) {
-			for (int j = 0; j <= N; j++) {
-				vis[i][j] = INT_MAX;
-			}
-		}
-
-		queue<pair<int, int>>q;
-		q.push({srcx, srcy});
-		vis[srcx][srcy] = 0;
-
-		while (!q.empty()) {
-			int i = q.front().first;
-			int j = q.front().second;
-			q.pop();
-			for (int k = 0; k < 8; k++) {
-				int x = i + dx[k];
-				int y = j + dy[k];
-
-				if (x >= 1 && j >= 1 && x <= N && y <= N && vis[x][y] == INT_MAX) {
-					vis[x][y] = vis[i][j] + 1;
-					q.push({x, y});
-				}
-			}
-		}
-
-		// for (int i = 1; i <= N; i++) {
-		// 	for (int j = 1; j <= N; j++) {
-		// 		cout << vis[i][j] << " ";
-		// 	}
-		// 	cout << endl;
-		// }
-		return vis[destx][desty];
-	}
-	// void solve(int i, int j, int destx, int desty, int N, int count) {
-	// 	if (i < 1 || j < 1 || i > N || j > N || vis[i][j] == 1) {
-	// 		return;
+	// 	for (int i = 0; i <= N; i++) {
+	// 		for (int j = 0; j <= N; j++) {
+	// 			vis[i][j] = INT_MAX;
+	// 		}
 	// 	}
-	// 	cout << i << " " << j << endl;
 
+	// 	queue<pair<int, int>>q;
+	// 	q.push({srcx, srcy});
+	// 	vis[srcx][srcy] = 0;
 
-	// 	if (i == destx && j == desty) {
-	// 		ans = min(ans, count);
-	// 		return;
+	// 	while (!q.empty()) {
+	// 		int i = q.front().first;
+	// 		int j = q.front().second;
+	// 		q.pop();
+	// 		for (int k = 0; k < 8; k++) {
+	// 			int x = i + dx[k];
+	// 			int y = j + dy[k];
+
+	// 			if (x >= 1 && j >= 1 && x <= N && y <= N && vis[x][y] == INT_MAX) {
+	// 				vis[x][y] = vis[i][j] + 1;
+	// 				q.push({x, y});
+	// 			}
+	// 		}
 	// 	}
-	// 	vis[i][j] = 1;
-	// 	for (int k = 0; k < 8; k++) {
-	// 		solve(i + dx[k], j + dy[k], destx, desty, N, count + 1);
-	// 	}
-	// 	vis[i][j] = 0;
-	// 	//return;
+
+	// 	// for (int i = 1; i <= N; i++) {
+	// 	// 	for (int j = 1; j <= N; j++) {
+	// 	// 		cout << vis[i][j] << " ";
+	// 	// 	}
+	// 	// 	cout << endl;
+	// 	// }
+	// 	return vis[destx][desty];
 	// }
+	void solve(int i, int j, int destx, int desty, int N, int count) {
+		if (i < 1 || j < 1 || i > N || j > N || vis[i][j] == 1) {
+			return;
+		}
+		cout << i << " " << j << endl;
+
+
+		if (i == destx && j == desty) {
+			ans = min(ans, count);
+			return;
+		}
+		vis[i][j] = 1;
+		for (int k = 0; k < 8; k++) {
+			solve(i + dx[k], j + dy[k], destx, desty, N, count + 1);
+		}
+		vis[i][j] = 0;
+		//return;
+	}
 
 	int minStepToReachTarget(vector<int>&KnightPos, vector<int>&TargetPos, int N) {
-		// vector<vector<int>>vis(N, vector<int> (N + 1, 0));
-		//memset(vis, 0, sizeof(vis));
+		//vector<vector<int>>vis(N, vector<int> (N + 1, 0));
+		memset(vis, 0, sizeof(vis));
 		if (KnightPos[0] == TargetPos[0] && KnightPos[1] == TargetPos[1] ) return 0;
 		//	solve(KnightPos[0], KnightPos[1], TargetPos[0], TargetPos[1], N, 0);
 
-		//return ans;
-		return bfs(KnightPos[0], KnightPos[1], TargetPos[0], TargetPos[1], N);
+		return ans;
+		//return bfs(KnightPos[0], KnightPos[1], TargetPos[0], TargetPos[1], N);
 	}
 };
 
