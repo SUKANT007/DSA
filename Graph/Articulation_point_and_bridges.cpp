@@ -102,10 +102,7 @@ int main()
 		cin >> x >> y;
 		adj[x].push_back(y);
 		adj[y].push_back(x);
-		dis[x] = 0 ;
-		dis[y] = 0;
-		low[x] = INT_MAX;
-		low[y] = INT_MAX;
+
 	}
 
 	tme = 1;

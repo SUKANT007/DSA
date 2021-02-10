@@ -13,6 +13,7 @@ typedef pair<int, int> pii;
 typedef long long ll;
 
 #define 	INF 1e18
+#define 	endl "\n" // remove for interactive
 #define 	PI 3.1415926535897932384626
 #define 	all(x) x.begin(),x.end()
 #define 	mem(a,b) memset(a,b,sizeof(a))
@@ -43,11 +44,90 @@ ll power(ll a, ll b) //a is base, b is exponent
 }
 
 // Before sub : check for out of bounds , long long , floating point exception(division by zero) ,indexes , 0 , 1
+#define N 100005
 
-s
+vector<int> adj[N];
+int timer , tin[N] , tout[N];
+
+void euler_tour_1(int cur, int par) {
+
+	//cout << cur << " ";
+	for (auto nbr : adj[cur]) {
+		if (nbr != par) { // work only for tree
+			euler_tour_1(nbr, cur);
+			//cout << cur << " ";
+		}
+	}
 }
+
+void euler_tour_2(int cur, int par) {
+
+	//cout << cur << " ";
+	tin[cur] = timer++;
+	for (auto nbr : adj[cur]) {
+		if (nbr != par) {
+			euler_tour_2(nbr, cur);
+
+		}
+	}
+	tout[cur] = timer++;
+
+	//cout << cur << " ";
+}
+
+void euler_tour_3(int cur, int par) {
+
+	// cout << cur << " ";
+	tin[cur] = ++timer;
+	for (auto nbr : adj[cur]) {
+		if (nbr != par) {
+			euler_tour_3(nbr, cur);
+
+		}
+	}
+
+	tout[cur] = timer;
+
+
+}
+// whether x is an ancestor of y
+// OR whether y is in subtree of x
+// OR X comes in path from y to root
+
+bool is_ancestor(int x, int y) {
+	return tin[x] <= tin[y] && tout[x] >= tout[y];
+}
+
 int main()
 {
 	boost;
+	int n, m;
+	cin >> n >> m;
+	for (int i = 0; i < m; i++) {
+		int x, y;
+		cin >> x >> y;
+		adj[x].pb(y);
+		adj[y].pb(x);
+	}
+
+	// timer = 1;
+
+	timer = 0 ; // for euler_tour_3 only
+
+	// euler_tour_1(1, 0);
+	// cout << endl;
+	// euler_tour_2(1, 0);
+	// cout << endl;
+	euler_tour_3(1, 0);
+	cout << endl;
+	for (int i = 1; i <= n; i++) {
+		cout << i << " " << tin[i] << " " << tout[i] << endl;
+	}
+
+	if (is_ancestor(3, 8)) cout << "yes" << endl;
+	else cout << "no" << endl;
+
+	cout << endl;
+
 	return 0;
 }
