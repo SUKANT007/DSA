@@ -12,7 +12,7 @@ typedef pair<int, int> pii;
 typedef long long ll;
 
 #define     INF 1e18
-#define     endl "\n" // remove for interactive
+#define     endl "\n" // remove for interactive 
 #define     PI 3.1415926535897932384626
 #define     all(x) x.begin(),x.end()
 #define     mem(a,b) memset(a,b,sizeof(a))
@@ -60,6 +60,8 @@ ll power(ll a, ll b) //a is base, b is exponent
 //       -----
 
 // total : 23
+
+
 
 int main()
 {
