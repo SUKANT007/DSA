@@ -44,49 +44,57 @@ ll power(ll a, ll b) //a is base, b is exponent
 
 // Before sub : check for out of bounds , long long , floating point exception(division by zero) ,indexes , 0 , 1
 
-int solve(int i, int n, int start, int end, vector<vector<int>> &dp, int wines[]) {
+bool possible(int arr[], int n, int m, int k) {
+	bool flag = true;
+	long long cur_sub = arr[0];
+	int subs = 1;
+	for (int i = 1; i < n; i++) {
+		if (cur_sub + arr[i] > k) {
+			cur_sub = arr[i];
+			subs++;
+		}
+		else {
+			cur_sub += arr[i];
+		}
 
-	watch(i);
-
-	if (i == n + 1) {
-		watch(start);
-		watch(end);
-		return 0;
+		if (subs > m) {
+			flag = false;
+			break;
+		}
 	}
 
-	if (dp[start][end] != 0) return dp[start][end];
-
-	if (start == end) return dp[start][end] = wines[start] * i;
-
-	int left, right;
-
-	left = solve(i + 1, n, start + 1, end, dp, wines) + i * wines[start];
-
-	right = solve(i + 1, n, start, end - 1, dp, wines) + i * wines[end];
-
-	return dp[start][end] = max(left, right) ;
-
+	return flag;
 }
 
 
 int main()
 {
 	boost;
-	int n;
-	cin >> n;
-	int wines[n];
-	rep(i, n) cin >> wines[i];
-	vector<vector<int>>dp(n, vector<int>(n, 0));
-
-	solve(1, n, 0, n - 1, dp, wines);
-
-	for (int i = 0; i < n; i++) {
-		for (int j = 0; j < n; j++) {
-			cout << dp[i][j] << " ";
-		}
-		cout << endl;
+	int n, m;
+	cin >> n >> m;
+	int a[n];
+	long long sum  = 0;
+	int left = INT_MIN, right;
+	rep(i, n) {
+		cin >> a[i];
+		sum += a[i];
+		left = max(left, a[i]);
 	}
 
-	cout << dp[0][n - 1] << endl;
+	right = sum;
+	int ans = sum;
+
+	while (left <= right) {
+		int mid = (left + right) / 2;
+		if (possible(a, n, m, mid)) {
+			right = mid - 1;
+			ans = min(ans, mid);
+		}
+		else
+			left = mid + 1;
+	}
+
+	cout << ans << endl;
+
 	return 0;
 }

@@ -44,27 +44,35 @@ ll power(ll a, ll b) //a is base, b is exponent
 
 // Before sub : check for out of bounds , long long , floating point exception(division by zero) ,indexes , 0 , 1
 
-int solve(int i, int n, int start, int end, vector<vector<int>> &dp, int wines[]) {
+vector<int> flip(string A) {
+	int flag = false;
+	int n = A.length();
+	int l = 0, r = 0, tl = 0, tr = 0;
+	int cur_sum = 0, ovr_max = 0;
+	for (int i = 0; i < n; i++) {
+		int val = A[i] == '1' ? -1 : 1;
+		if (cur_sum + val < val) {
+			tl = i;
+			tr = i;
+			cur_sum = val;
+		}
+		else {
+			cur_sum += val;
+			tr = i;
+		}
 
-	watch(i);
+		if (cur_sum > ovr_max) {
 
-	if (i == n + 1) {
-		watch(start);
-		watch(end);
-		return 0;
+			ovr_max = cur_sum;
+			l = tl;
+			r = tr;
+			flag = true;
+		}
+
 	}
 
-	if (dp[start][end] != 0) return dp[start][end];
-
-	if (start == end) return dp[start][end] = wines[start] * i;
-
-	int left, right;
-
-	left = solve(i + 1, n, start + 1, end, dp, wines) + i * wines[start];
-
-	right = solve(i + 1, n, start, end - 1, dp, wines) + i * wines[end];
-
-	return dp[start][end] = max(left, right) ;
+	if (flag) return {l + 1, r + 1};
+	else return {};
 
 }
 
@@ -72,21 +80,9 @@ int solve(int i, int n, int start, int end, vector<vector<int>> &dp, int wines[]
 int main()
 {
 	boost;
-	int n;
-	cin >> n;
-	int wines[n];
-	rep(i, n) cin >> wines[i];
-	vector<vector<int>>dp(n, vector<int>(n, 0));
-
-	solve(1, n, 0, n - 1, dp, wines);
-
-	for (int i = 0; i < n; i++) {
-		for (int j = 0; j < n; j++) {
-			cout << dp[i][j] << " ";
-		}
-		cout << endl;
-	}
-
-	cout << dp[0][n - 1] << endl;
+	string s;
+	cin >> s;
+	vector<int> ans = flip(s);
+	for (auto ele : ans) cout << ele << " ";
 	return 0;
 }

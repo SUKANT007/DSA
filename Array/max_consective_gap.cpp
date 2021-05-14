@@ -44,28 +44,32 @@ ll power(ll a, ll b) //a is base, b is exponent
 
 // Before sub : check for out of bounds , long long , floating point exception(division by zero) ,indexes , 0 , 1
 
-int solve(int i, int n, int start, int end, vector<vector<int>> &dp, int wines[]) {
+int maximumGap(const vector<int> &A) {
 
-	watch(i);
+	int n = A.size();
+	if (n == 1) return 0;
 
-	if (i == n + 1) {
-		watch(start);
-		watch(end);
-		return 0;
+	priority_queue<int> pq(A.begin(), A.end());
+
+	int ans = 0;
+	int cur_num = -1;
+
+	while (!pq.empty()) {
+		if (cur_num == -1) {
+			cur_num = pq.top();
+			//watch(cur_num);
+			pq.pop();
+		}
+		else {
+			ans = max(ans, abs(pq.top() - cur_num));
+			//watch(ans);
+			cur_num = pq.top();
+			//watch(cur_num);
+			pq.pop();
+		}
 	}
 
-	if (dp[start][end] != 0) return dp[start][end];
-
-	if (start == end) return dp[start][end] = wines[start] * i;
-
-	int left, right;
-
-	left = solve(i + 1, n, start + 1, end, dp, wines) + i * wines[start];
-
-	right = solve(i + 1, n, start, end - 1, dp, wines) + i * wines[end];
-
-	return dp[start][end] = max(left, right) ;
-
+	return ans;
 }
 
 
@@ -74,19 +78,8 @@ int main()
 	boost;
 	int n;
 	cin >> n;
-	int wines[n];
-	rep(i, n) cin >> wines[i];
-	vector<vector<int>>dp(n, vector<int>(n, 0));
-
-	solve(1, n, 0, n - 1, dp, wines);
-
-	for (int i = 0; i < n; i++) {
-		for (int j = 0; j < n; j++) {
-			cout << dp[i][j] << " ";
-		}
-		cout << endl;
-	}
-
-	cout << dp[0][n - 1] << endl;
+	vector<int> A(n);
+	rep(i, n) cin >> A[i];
+	cout << maximumGap(A) << endl;
 	return 0;
 }

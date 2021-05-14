@@ -44,49 +44,43 @@ ll power(ll a, ll b) //a is base, b is exponent
 
 // Before sub : check for out of bounds , long long , floating point exception(division by zero) ,indexes , 0 , 1
 
-int solve(int i, int n, int start, int end, vector<vector<int>> &dp, int wines[]) {
+vector<int> findPerm(const string A, int n) {
+	int I = 0 , D = 0;
+	for (auto ch : A) {
+		if (ch == 'D') D++;
+	}
+	vector<int> ans(n);
 
-	watch(i);
-
-	if (i == n + 1) {
-		watch(start);
-		watch(end);
-		return 0;
+	I = D + 1;
+	if (I == 0) {
+		ans[0] = D + 1;
+	}
+	else {
+		ans[0] = I;
+	}
+	for (int i = 0; i < n - 1; i++) {
+		if (A[i] == 'I') {
+			ans[i + 1] = ++I;
+		}
+		else {
+			ans[i + 1] = D--;
+		}
 	}
 
-	if (dp[start][end] != 0) return dp[start][end];
-
-	if (start == end) return dp[start][end] = wines[start] * i;
-
-	int left, right;
-
-	left = solve(i + 1, n, start + 1, end, dp, wines) + i * wines[start];
-
-	right = solve(i + 1, n, start, end - 1, dp, wines) + i * wines[end];
-
-	return dp[start][end] = max(left, right) ;
-
+	return ans;
 }
-
 
 int main()
 {
 	boost;
 	int n;
 	cin >> n;
-	int wines[n];
-	rep(i, n) cin >> wines[i];
-	vector<vector<int>>dp(n, vector<int>(n, 0));
-
-	solve(1, n, 0, n - 1, dp, wines);
-
+	string s;
+	cin >> s;
+	vector<int> ans = findPerm(s, n);
 	for (int i = 0; i < n; i++) {
-		for (int j = 0; j < n; j++) {
-			cout << dp[i][j] << " ";
-		}
-		cout << endl;
+		cout << ans[i] << " ";
 	}
-
-	cout << dp[0][n - 1] << endl;
+	cout << endl;
 	return 0;
 }

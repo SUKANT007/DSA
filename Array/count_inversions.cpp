@@ -43,28 +43,54 @@ ll power(ll a, ll b) //a is base, b is exponent
 }
 
 // Before sub : check for out of bounds , long long , floating point exception(division by zero) ,indexes , 0 , 1
+long long invcnt = 0;
 
-int solve(int i, int n, int start, int end, vector<vector<int>> &dp, int wines[]) {
+void merge(long long arr[], long start, long long mid, long long end, long long n) {
 
-	watch(i);
+	long long temp[n];
+	long long i = start, j = mid + 1;
+	long long idx = start;
 
-	if (i == n + 1) {
-		watch(start);
-		watch(end);
-		return 0;
+	while (i <= mid && j <= end) {
+		if (arr[i] <= arr[j]) {
+			temp[idx] = arr[i];
+			idx++;
+			i++;
+		}
+		else {
+			invcnt += (mid - i + 1);
+			temp[idx] = arr[j];
+			idx++;
+			j++;
+		}
 	}
 
-	if (dp[start][end] != 0) return dp[start][end];
+	while (i <= mid) {
+		temp[idx] = arr[i];
+		idx++;
+		i++;
+	}
+	while (j <= end) {
+		temp[idx] = arr[j];
+		idx++;
+		j++;
+	}
 
-	if (start == end) return dp[start][end] = wines[start] * i;
+	for (int k = start; k <= end; k++) {
+		arr[k] = temp[k];
+	}
+}
 
-	int left, right;
 
-	left = solve(i + 1, n, start + 1, end, dp, wines) + i * wines[start];
+void mergeSort(long long arr[], long long start, long long end, long long n) {
 
-	right = solve(i + 1, n, start, end - 1, dp, wines) + i * wines[end];
+	if (start < end) {
+		int mid = (start + end) / 2;
+		mergeSort(arr, start, mid, n);
+		mergeSort(arr, mid + 1, end, n);
+		merge(arr, start, mid, end, n);
 
-	return dp[start][end] = max(left, right) ;
+	}
 
 }
 
@@ -72,21 +98,13 @@ int solve(int i, int n, int start, int end, vector<vector<int>> &dp, int wines[]
 int main()
 {
 	boost;
-	int n;
+	long long n;
 	cin >> n;
-	int wines[n];
-	rep(i, n) cin >> wines[i];
-	vector<vector<int>>dp(n, vector<int>(n, 0));
-
-	solve(1, n, 0, n - 1, dp, wines);
-
-	for (int i = 0; i < n; i++) {
-		for (int j = 0; j < n; j++) {
-			cout << dp[i][j] << " ";
-		}
-		cout << endl;
-	}
-
-	cout << dp[0][n - 1] << endl;
+	long long arr[n];
+	rep(i, n) cin >> arr[i];
+	mergeSort(arr, 0, n - 1, n);
+	rep(i, n) cout << arr[i] << " ";
+	cout << endl;
+	cout << invcnt << endl;
 	return 0;
 }

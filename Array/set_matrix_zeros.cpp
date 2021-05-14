@@ -43,50 +43,72 @@ ll power(ll a, ll b) //a is base, b is exponent
 }
 
 // Before sub : check for out of bounds , long long , floating point exception(division by zero) ,indexes , 0 , 1
+void setZeroes(vector<vector<int>>& matrix) {
+	bool firstrow = false , firstcol = false;
+	int n = matrix.size();
+	int m = matrix[0].size();
 
-int solve(int i, int n, int start, int end, vector<vector<int>> &dp, int wines[]) {
-
-	watch(i);
-
-	if (i == n + 1) {
-		watch(start);
-		watch(end);
-		return 0;
+	for (int i = 0; i < n; i++) {
+		if (matrix[i][0] == 0) {
+			firstcol = true;
+			break;
+		}
 	}
 
-	if (dp[start][end] != 0) return dp[start][end];
+	for (int i = 0; i < m; i++) {
+		if (matrix[0][i] == 0) {
+			firstrow = true;
+			break;
+		}
+	}
 
-	if (start == end) return dp[start][end] = wines[start] * i;
+	for (int i = 0; i < n; i++) {
+		for (int j = 0; j < m; j++) {
+			if (matrix[i][j] == 0) {
+				matrix[i][0] = 0;
+				matrix[0][j] = 0;
+			}
+		}
+	}
 
-	int left, right;
+	for (int i = 1; i < n; i++) {
+		for (int j = 1; j < m; j++) {
+			if (matrix[0][j] == 0 || matrix[i][0] == 0) {
+				matrix[i][j] = 0;
+			}
+		}
+	}
 
-	left = solve(i + 1, n, start + 1, end, dp, wines) + i * wines[start];
+	if (firstrow) {
+		for (int i = 0; i < m; i++) {
+			matrix[0][i] = 0;
+		}
+	}
 
-	right = solve(i + 1, n, start, end - 1, dp, wines) + i * wines[end];
-
-	return dp[start][end] = max(left, right) ;
+	if (firstcol) {
+		for (int i = 0; i < n; i++) {
+			matrix[i][0] = 0;
+		}
+	}
 
 }
-
-
 int main()
 {
 	boost;
-	int n;
-	cin >> n;
-	int wines[n];
-	rep(i, n) cin >> wines[i];
-	vector<vector<int>>dp(n, vector<int>(n, 0));
-
-	solve(1, n, 0, n - 1, dp, wines);
-
+	int n, m;
+	cin >> n >> m;
+	vector<vector<int>>matrix(n, vector<int>(m));
 	for (int i = 0; i < n; i++) {
-		for (int j = 0; j < n; j++) {
-			cout << dp[i][j] << " ";
+		for (int j = 0; j < m; j++) {
+			cin >> matrix[i][j];
+		}
+	}
+	setZeroes(matrix);
+	for (int i = 0; i < n; i++) {
+		for (int j = 0; j < m; j++) {
+			cout << matrix[i][j] << " ";
 		}
 		cout << endl;
 	}
-
-	cout << dp[0][n - 1] << endl;
 	return 0;
 }

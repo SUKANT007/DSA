@@ -44,49 +44,49 @@ ll power(ll a, ll b) //a is base, b is exponent
 
 // Before sub : check for out of bounds , long long , floating point exception(division by zero) ,indexes , 0 , 1
 
-int solve(int i, int n, int start, int end, vector<vector<int>> &dp, int wines[]) {
-
-	watch(i);
-
-	if (i == n + 1) {
-		watch(start);
-		watch(end);
+int solve(int i, int start, int end, vector<int> &cardPoints, int k) {
+	if (i == k) {
 		return 0;
 	}
 
-	if (dp[start][end] != 0) return dp[start][end];
+	int ans = max(solve(i + 1, start + 1, end, cardPoints, k) + cardPoints[start], solve(i + 1, start, end - 1, cardPoints, k) + cardPoints[end]);
 
-	if (start == end) return dp[start][end] = wines[start] * i;
-
-	int left, right;
-
-	left = solve(i + 1, n, start + 1, end, dp, wines) + i * wines[start];
-
-	right = solve(i + 1, n, start, end - 1, dp, wines) + i * wines[end];
-
-	return dp[start][end] = max(left, right) ;
-
+	return ans;
 }
 
+int maxScore(vector<int>& cardPoints, int k) {
+
+	int n = cardPoints.size();
+
+	return solve(0, 0, n - 1, cardPoints, k);
+
+}
 
 int main()
 {
 	boost;
-	int n;
-	cin >> n;
-	int wines[n];
-	rep(i, n) cin >> wines[i];
-	vector<vector<int>>dp(n, vector<int>(n, 0));
+	int n, k;
+	cin >> n >> k;
+	vector<int> cardPoints(n);
+	long long totalSum = 0;
+	rep(i, n) {
+		cin >> cardPoints[i];
+		totalSum += cardPoints[i];
+	}
+	int len = n - k;
+	long long minSum = 0, cur = 0;
+	for (int i = 0; i < len; i++) {
+		minSum += cardPoints[i];
+		cur += cardPoints[i];
+	}
+	// watch(minSum);
+	// watch(cur);
 
-	solve(1, n, 0, n - 1, dp, wines);
-
-	for (int i = 0; i < n; i++) {
-		for (int j = 0; j < n; j++) {
-			cout << dp[i][j] << " ";
-		}
-		cout << endl;
+	for (int i = 0; i < k; i++) {
+		cur += cardPoints[len + i] - cardPoints[i];
+		minSum = min(minSum, cur);
 	}
 
-	cout << dp[0][n - 1] << endl;
+	cout << totalSum - minSum << endl;
 	return 0;
 }

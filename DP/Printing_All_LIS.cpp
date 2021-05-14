@@ -44,49 +44,68 @@ ll power(ll a, ll b) //a is base, b is exponent
 
 // Before sub : check for out of bounds , long long , floating point exception(division by zero) ,indexes , 0 , 1
 
-int solve(int i, int n, int start, int end, vector<vector<int>> &dp, int wines[]) {
-
-	watch(i);
-
-	if (i == n + 1) {
-		watch(start);
-		watch(end);
-		return 0;
-	}
-
-	if (dp[start][end] != 0) return dp[start][end];
-
-	if (start == end) return dp[start][end] = wines[start] * i;
-
-	int left, right;
-
-	left = solve(i + 1, n, start + 1, end, dp, wines) + i * wines[start];
-
-	right = solve(i + 1, n, start, end - 1, dp, wines) + i * wines[end];
-
-	return dp[start][end] = max(left, right) ;
-
-}
-
 
 int main()
 {
 	boost;
 	int n;
 	cin >> n;
-	int wines[n];
-	rep(i, n) cin >> wines[i];
-	vector<vector<int>>dp(n, vector<int>(n, 0));
+	int a[n];
+	rep(i, n) cin >> a[i];
 
-	solve(1, n, 0, n - 1, dp, wines);
+	vector<int> dp(n, 1);
+
+	int omax = 0;
 
 	for (int i = 0; i < n; i++) {
-		for (int j = 0; j < n; j++) {
-			cout << dp[i][j] << " ";
+		int maxi = 1;
+		for (int j = 0; j < i; j++) {
+			if (a[j] <= a[i]) {
+				maxi = max(maxi, dp[j] + 1);
+			}
 		}
-		cout << endl;
+
+		dp[i] = maxi;
+		if (omax < maxi) {
+			omax = maxi;
+		}
 	}
 
-	cout << dp[0][n - 1] << endl;
+	// rep(i, n) cout << dp[i] << " ";
+	// cout << endl;
+
+	cout << "LIS length: " << omax << endl;
+
+	queue<pair<int, string>> q;
+
+	for (int i = 0; i < n; i++) {
+		if (dp[i] == omax) {
+			q.push({i, to_string(a[i])});
+		}
+	}
+
+	int count = 0;
+
+	while (!q.empty()) {
+		pair<int, string> p = q.front();
+		q.pop();
+		int idx = p.first;
+		int len = dp[idx];
+		int value = a[idx];
+		if (len == 1) {
+			cout << p.second << endl;
+			count++;
+		}
+		for (int i = p.first - 1; i >= 0; i--) {
+			if (dp[i] == len - 1 && a[i] <=  value) {
+				q.push({i, to_string(a[i]) + "-->" + p.second});
+			}
+		}
+	}
+
+	cout << count << endl;
+
+
+
 	return 0;
 }

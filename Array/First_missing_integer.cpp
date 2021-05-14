@@ -44,29 +44,41 @@ ll power(ll a, ll b) //a is base, b is exponent
 
 // Before sub : check for out of bounds , long long , floating point exception(division by zero) ,indexes , 0 , 1
 
-int solve(int i, int n, int start, int end, vector<vector<int>> &dp, int wines[]) {
 
-	watch(i);
-
-	if (i == n + 1) {
-		watch(start);
-		watch(end);
-		return 0;
+int firstMissingPositive(vector<int> &A) {
+	int n = A.size();
+	for (int i = 0; i < n; i++) {
+		if (A[i] <= 0 || A[i] > n)
+			A[i] = n + 1;
 	}
 
-	if (dp[start][end] != 0) return dp[start][end];
 
-	if (start == end) return dp[start][end] = wines[start] * i;
+	for (int i = 0; i < n; i++) {
+		cout << A[i] << " ";
+	}
+	cout << endl;
+	for (int i = 0; i < n; i++) {
+		if (abs(A[i]) == n + 1) continue;
 
-	int left, right;
+		int num = abs(A[i]);
+		if (A[num - 1] > 0)
+			A[num - 1] *= -1;
 
-	left = solve(i + 1, n, start + 1, end, dp, wines) + i * wines[start];
+	}
 
-	right = solve(i + 1, n, start, end - 1, dp, wines) + i * wines[end];
 
-	return dp[start][end] = max(left, right) ;
+	for (int i = 0; i < n; i++) {
+		cout << A[i] << " ";
+	}
+	cout << endl;
 
+	for (int i = 0; i < n; i++) {
+		if (A[i] > 0) return i + 1;
+	}
+
+	return n + 1;
 }
+
 
 
 int main()
@@ -74,19 +86,8 @@ int main()
 	boost;
 	int n;
 	cin >> n;
-	int wines[n];
-	rep(i, n) cin >> wines[i];
-	vector<vector<int>>dp(n, vector<int>(n, 0));
-
-	solve(1, n, 0, n - 1, dp, wines);
-
-	for (int i = 0; i < n; i++) {
-		for (int j = 0; j < n; j++) {
-			cout << dp[i][j] << " ";
-		}
-		cout << endl;
-	}
-
-	cout << dp[0][n - 1] << endl;
+	vector<int> A(n);
+	for (int i = 0; i < n; i++) cin >> A[i];
+	cout << firstMissingPositive(A);
 	return 0;
 }

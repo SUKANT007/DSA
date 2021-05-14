@@ -44,49 +44,42 @@ ll power(ll a, ll b) //a is base, b is exponent
 
 // Before sub : check for out of bounds , long long , floating point exception(division by zero) ,indexes , 0 , 1
 
-int solve(int i, int n, int start, int end, vector<vector<int>> &dp, int wines[]) {
 
-	watch(i);
+int lengthOfLongestSubstring(string s) {
+	map<char, int> mp;
+	int n = s.length();
+	if (n == 0) return 0;
+	int ans = 1;
+	int len = 0;
+	int start = 0;
 
-	if (i == n + 1) {
-		watch(start);
-		watch(end);
-		return 0;
+	for (int i = 0; i < n; i++) {
+
+		if (!mp.count(s[i]) || mp[s[i]] < start) {
+			len++;
+		}
+		else {
+			len = i - mp[s[i]];
+			start = mp[s[i]] + 1;
+		}
+
+		mp[s[i]] = i;
+		ans = max(ans, len);
+		//watch(ans);
+
 	}
 
-	if (dp[start][end] != 0) return dp[start][end];
-
-	if (start == end) return dp[start][end] = wines[start] * i;
-
-	int left, right;
-
-	left = solve(i + 1, n, start + 1, end, dp, wines) + i * wines[start];
-
-	right = solve(i + 1, n, start, end - 1, dp, wines) + i * wines[end];
-
-	return dp[start][end] = max(left, right) ;
-
+	return ans;
 }
 
 
 int main()
 {
 	boost;
-	int n;
-	cin >> n;
-	int wines[n];
-	rep(i, n) cin >> wines[i];
-	vector<vector<int>>dp(n, vector<int>(n, 0));
+	string s;
+	cin >> s;
+	cout << lengthOfLongestSubstring(s) << endl;
 
-	solve(1, n, 0, n - 1, dp, wines);
 
-	for (int i = 0; i < n; i++) {
-		for (int j = 0; j < n; j++) {
-			cout << dp[i][j] << " ";
-		}
-		cout << endl;
-	}
-
-	cout << dp[0][n - 1] << endl;
 	return 0;
 }

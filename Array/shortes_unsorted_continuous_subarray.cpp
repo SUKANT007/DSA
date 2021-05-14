@@ -44,28 +44,44 @@ ll power(ll a, ll b) //a is base, b is exponent
 
 // Before sub : check for out of bounds , long long , floating point exception(division by zero) ,indexes , 0 , 1
 
-int solve(int i, int n, int start, int end, vector<vector<int>> &dp, int wines[]) {
 
-	watch(i);
-
-	if (i == n + 1) {
-		watch(start);
-		watch(end);
-		return 0;
+vector<int> subUnsort(vector<int> &A) {
+	int n = A.size();
+	if (n == 0) return { -1};
+	int start = 0;
+	int end = n - 1;
+	while (start < n - 1 && A[start] <= A[start + 1]) {
+		start++;
 	}
 
-	if (dp[start][end] != 0) return dp[start][end];
+	if (start == n - 1) return { -1};
 
-	if (start == end) return dp[start][end] = wines[start] * i;
+	while (end > 0 && A[end - 1] <= A[end]) {
+		end--;
+	}
 
-	int left, right;
+	int mini = INT_MAX;
+	int maxi = INT_MIN;
 
-	left = solve(i + 1, n, start + 1, end, dp, wines) + i * wines[start];
+	for (int i = start; i <= end; i++) {
+		mini = min(mini, A[i]);
+		maxi = max(maxi, A[i]);
+	}
 
-	right = solve(i + 1, n, start, end - 1, dp, wines) + i * wines[end];
+	// watch(start);
+	// watch(end);
+	// watch(mini);
+	// watch(maxi);
 
-	return dp[start][end] = max(left, right) ;
+	while (start > 0 && A[start - 1] > mini) {
+		start--;
+	}
 
+	while (end < n - 1 && A[end + 1] < maxi) {
+		end++;
+	}
+
+	return {start, end};
 }
 
 
@@ -74,19 +90,9 @@ int main()
 	boost;
 	int n;
 	cin >> n;
-	int wines[n];
-	rep(i, n) cin >> wines[i];
-	vector<vector<int>>dp(n, vector<int>(n, 0));
-
-	solve(1, n, 0, n - 1, dp, wines);
-
-	for (int i = 0; i < n; i++) {
-		for (int j = 0; j < n; j++) {
-			cout << dp[i][j] << " ";
-		}
-		cout << endl;
-	}
-
-	cout << dp[0][n - 1] << endl;
+	vector<int> arr(n);
+	rep(i, n) cin >> arr[i];
+	vector<int> ans = subUnsort(arr);
+	for (auto it  : ans) cout << it << " ";
 	return 0;
 }

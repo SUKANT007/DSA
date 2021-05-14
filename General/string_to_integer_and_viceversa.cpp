@@ -44,49 +44,28 @@ ll power(ll a, ll b) //a is base, b is exponent
 
 // Before sub : check for out of bounds , long long , floating point exception(division by zero) ,indexes , 0 , 1
 
-int solve(int i, int n, int start, int end, vector<vector<int>> &dp, int wines[]) {
-
-	watch(i);
-
-	if (i == n + 1) {
-		watch(start);
-		watch(end);
-		return 0;
-	}
-
-	if (dp[start][end] != 0) return dp[start][end];
-
-	if (start == end) return dp[start][end] = wines[start] * i;
-
-	int left, right;
-
-	left = solve(i + 1, n, start + 1, end, dp, wines) + i * wines[start];
-
-	right = solve(i + 1, n, start, end - 1, dp, wines) + i * wines[end];
-
-	return dp[start][end] = max(left, right) ;
-
-}
-
-
 int main()
 {
 	boost;
-	int n;
-	cin >> n;
-	int wines[n];
-	rep(i, n) cin >> wines[i];
-	vector<vector<int>>dp(n, vector<int>(n, 0));
+	string s = "3.2145";
+	int num = stoi(s);
+	double numd = stod(s);
+	long double numld = stold(s);
+	float numf = stof(s);
+	long long numll = stoll(s);
+	watch(num);
+	watch(numd);
+	watch(numld);
+	watch(numf);
+	watch(numll);
 
-	solve(1, n, 0, n - 1, dp, wines);
-
-	for (int i = 0; i < n; i++) {
-		for (int j = 0; j < n; j++) {
-			cout << dp[i][j] << " ";
-		}
-		cout << endl;
-	}
-
-	cout << dp[0][n - 1] << endl;
+	string s2 = to_string(numd);
+	cout << s2 << endl;
+	string s3 = to_string(numld);
+	cout << s3 << endl;
+	string s4 = to_string(num);
+	cout << s4 << endl;
+	string s5 = to_string(numf);
+	cout << s5 << endl;
 	return 0;
 }

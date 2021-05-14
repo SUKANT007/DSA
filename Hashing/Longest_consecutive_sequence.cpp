@@ -44,49 +44,39 @@ ll power(ll a, ll b) //a is base, b is exponent
 
 // Before sub : check for out of bounds , long long , floating point exception(division by zero) ,indexes , 0 , 1
 
-int solve(int i, int n, int start, int end, vector<vector<int>> &dp, int wines[]) {
+int longestConsecutive(vector<int>& nums) {
+	map<int, int> mp;
+	int ans = 1;
 
-	watch(i);
-
-	if (i == n + 1) {
-		watch(start);
-		watch(end);
-		return 0;
+	for (int num : nums) {
+		mp[num]++;
 	}
 
-	if (dp[start][end] != 0) return dp[start][end];
+	for (int x : nums) {
+		int i = 1;
+		int j = 1;
+		cout << x << endl;
+		while (mp[x - i] >= 1) {
+			i++;
+		}
+		while (mp[x + j] >= 1) {
+			j++;
+		}
+		watch(i);
+		watch(j);
+		ans = max(ans, i + j - 1);
+	}
 
-	if (start == end) return dp[start][end] = wines[start] * i;
-
-	int left, right;
-
-	left = solve(i + 1, n, start + 1, end, dp, wines) + i * wines[start];
-
-	right = solve(i + 1, n, start, end - 1, dp, wines) + i * wines[end];
-
-	return dp[start][end] = max(left, right) ;
-
+	return ans;
 }
-
 
 int main()
 {
 	boost;
 	int n;
 	cin >> n;
-	int wines[n];
-	rep(i, n) cin >> wines[i];
-	vector<vector<int>>dp(n, vector<int>(n, 0));
-
-	solve(1, n, 0, n - 1, dp, wines);
-
-	for (int i = 0; i < n; i++) {
-		for (int j = 0; j < n; j++) {
-			cout << dp[i][j] << " ";
-		}
-		cout << endl;
-	}
-
-	cout << dp[0][n - 1] << endl;
+	vector<int> nums(n);
+	rep(i, n) cin >> nums[i];
+	cout << longestConsecutive(nums);
 	return 0;
 }

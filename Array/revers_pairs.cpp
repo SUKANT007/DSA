@@ -44,49 +44,75 @@ ll power(ll a, ll b) //a is base, b is exponent
 
 // Before sub : check for out of bounds , long long , floating point exception(division by zero) ,indexes , 0 , 1
 
-int solve(int i, int n, int start, int end, vector<vector<int>> &dp, int wines[]) {
+int merge(vector<int> &nums, int low, int mid, int high) {
+	int temp[nums.size()];
+	int i = low, j = mid + 1;
+	int idx = low;
+	int invcnt = 0;
 
-	watch(i);
+	while (i <= mid && j <= high) {
+		if (nums[i] <= nums[j]) {
+			temp[idx++] = nums[i++];
+		}
+		else {
 
-	if (i == n + 1) {
-		watch(start);
-		watch(end);
-		return 0;
+			if (nums[i] > 2 * nums[j]) {
+
+				invcnt += mid - i + 1;
+			}
+			watch(i);
+			watch(j);
+
+			cout << nums[i] << " " << nums[j] << endl;
+			temp[idx++] = nums[j++];
+
+		}
 	}
 
-	if (dp[start][end] != 0) return dp[start][end];
+	while (i <= mid) {
+		temp[idx++] = nums[i++];
+	}
+	while (j <= high) {
+		temp[idx++] = nums[j++];
+	}
 
-	if (start == end) return dp[start][end] = wines[start] * i;
+	for (int k = low; k <= high; k++) {
+		nums[k] = temp[k];
+	}
 
-	int left, right;
+	return invcnt;
+}
 
-	left = solve(i + 1, n, start + 1, end, dp, wines) + i * wines[start];
+int mergeSort(vector<int> &nums, int low, int high) {
+	if (low >= high) return 0;
+	int mid = low + (high - low) / 2;
+	int left = mergeSort(nums, low, mid);
+	int right = mergeSort(nums, mid + 1, high);
+	int cross =  merge(nums, low, mid, high);
+	return left + right + cross;
+}
 
-	right = solve(i + 1, n, start, end - 1, dp, wines) + i * wines[end];
+int reversePairs(vector<int>& nums) {
 
-	return dp[start][end] = max(left, right) ;
-
+	return mergeSort(nums, 0, nums.size() - 1);
 }
 
 
 int main()
 {
 	boost;
+
 	int n;
 	cin >> n;
-	int wines[n];
-	rep(i, n) cin >> wines[i];
-	vector<vector<int>>dp(n, vector<int>(n, 0));
+	vector<int> nums(n);
 
-	solve(1, n, 0, n - 1, dp, wines);
+	rep(i, n) cin >> nums[i];
 
-	for (int i = 0; i < n; i++) {
-		for (int j = 0; j < n; j++) {
-			cout << dp[i][j] << " ";
-		}
-		cout << endl;
-	}
+	//cout << "reverse Pairs: " << reversePairs(nums) << endl;
 
-	cout << dp[0][n - 1] << endl;
+	// rep(i, n) {
+	// 	cout << nums[i] << " ";
+	// }
+
 	return 0;
 }
