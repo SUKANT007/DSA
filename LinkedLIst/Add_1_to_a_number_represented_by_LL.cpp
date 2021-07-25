@@ -1,4 +1,3 @@
-
 #include<bits/stdc++.h>
 #include <ext/pb_ds/assoc_container.hpp>
 #include <ext/pb_ds/tree_policy.hpp>
@@ -13,6 +12,7 @@ typedef pair<int, int> pii;
 typedef long long ll;
 
 #define 	INF 1e18
+#define 	endl "\n" // remove for interactive
 #define 	PI 3.1415926535897932384626
 #define 	all(x) x.begin(),x.end()
 #define 	mem(a,b) memset(a,b,sizeof(a))
@@ -45,98 +45,104 @@ ll power(ll a, ll b) //a is base, b is exponent
 // Before sub : check for out of bounds , long long , floating point exception(division by zero) ,indexes , 0 , 1
 
 
+struct Node {
+	int data;
+	struct Node* next;
 
-class DSU {
-
-	int *parent;
-	int *rank;
-public:
-	DSU(int n) {
-		parent = new int[n];
-		rank = new int[n];
-
-		for (int i = 0; i < n; i++) {
-			parent[i] = -1;
-			rank[i] = 1;
-		}
-	}
-
-	int Find(int i) {
-		if (parent[i] == -1) {
-			return i;
-		}
-		return parent[i] = Find(parent[i]);
-	}
-
-	void Union(int x, int y) {
-		int s1 = Find(x);
-		int s2 = Find(y);
-
-		if (s1 != s2) {
-			if (rank[s1] < rank[s2]) {
-				parent[s1] = s2;
-				rank[s2] += rank[s1];
-			}
-			else {
-				parent[s2] = s1;
-				rank[s1] += rank[s2];
-			}
-		}
+	Node(int x) {
+		data = x;
+		next = NULL;
 	}
 };
 
-class Graph {
-	vector<vector<int>> edgelist;
-	int V;
-public:
-	Graph(int V) {
-		this->V = V;
+void printList(Node* head) {
+
+	Node *ptr = head;
+	while (ptr != NULL) {
+		cout << ptr->data << " ";
+		ptr = ptr->next;
 	}
 
-	void addEdge(int x, int y, int w) {
-		edgelist.push_back({w, x, y});
+	cout << endl;
+}
+
+Node* helper(Node* cur, Node *prev) {
+
+	if (cur == NULL) return prev;
+
+	Node *ahead = cur->next;
+	cur->next = prev;
+
+	return helper(ahead, cur);
+
+}
+
+Node* addOne(Node *head)
+{
+	if (head == NULL) return head;
+	head = helper(head, NULL);
+
+	//cout << head->data << endl;
+
+	Node *ptr = head;
+	int carry;
+
+	if (ptr->data + 1 == 10) {
+		carry = 1;
+		ptr->data += 1;
+		ptr->data %= 10;
+
 	}
-	int kruskal_mst() {
-		//Main - logi Easy
-		sort(edgelist.begin(), edgelist.end());
-		int ans = 0;
+	else {
+		carry = 0;
+		ptr->data += 1;
+	}
+	//cout << ptr->data << endl;
 
-		//INIT dsu
-		DSU s(V);
+	// Node *temp = ptr;
+	// while (temp != NULL) {
+	// 	cout << temp->data << " ";
+	// 	temp = temp->next;
+	// }
 
-		for (auto edge : edgelist) {
-			int w = edge[0];
-			int x = edge[1];
-			int y = edge[2];
+	// cout << endl;
 
-			// take that edge in MST if it doesn't form a cycle
 
-			if (s.Find(x) != s.Find(y)) {
-				s.Union(x, y);
-				ans += w;
-			}
-
+	while (carry) {
+		if (ptr->next == NULL) {
+			Node *newNode = new Node(0);
+			ptr->next = newNode;
 		}
-
-		return ans;
+		ptr = ptr->next;
+		(ptr->data == 9) ? carry = 1 : carry = 0;
+		ptr->data += 1;
+		ptr->data %= 10;
 	}
-};
+
+	head = helper(head, NULL);
+
+	return head;
+}
+
 int main()
 {
 	boost;
-	int V, E;
-	cin >> V >> E;
-	Graph g(V);
-	vector<vector<int>>edgelist;
+	int t;
+	cin >> t;
+	while (t--) {
+		string s;
+		cin >> s;
 
-	for (int i = 0; i < E; i++) {
-		int w, x, y;
-		cin >> w >> x >> y;
-		g.addEdge(x, y, w);
+		Node *head = new Node(s[0] - '0');
+		Node *tail = head;
+
+		for (int i = 1; i < s.size(); i++) {
+			tail->next = new Node(s[i] - '0');
+			tail = tail->next;
+		}
+
+		head = addOne(head);
+		printList(head);
 	}
-
-
-	cout << g.kruskal_mst();
-
 	return 0;
 }

@@ -1,4 +1,3 @@
-
 #include<bits/stdc++.h>
 #include <ext/pb_ds/assoc_container.hpp>
 #include <ext/pb_ds/tree_policy.hpp>
@@ -13,6 +12,7 @@ typedef pair<int, int> pii;
 typedef long long ll;
 
 #define 	INF 1e18
+#define 	endl "\n" // remove for interactive
 #define 	PI 3.1415926535897932384626
 #define 	all(x) x.begin(),x.end()
 #define 	mem(a,b) memset(a,b,sizeof(a))
@@ -28,6 +28,7 @@ typedef long long ll;
 #define 	tr(container,it) for(auto it=container.begin();it!=container.end();it++)
 #define 	present(container, element) (container.find(element) != container.end())
 #define 	vpresent(container, element) (find(all(container),element) != container.end())//for vectors
+#define     int          long long int
 
 typedef tree<int, null_type, less<int>, rb_tree_tag, tree_order_statistics_node_update> PBDS;
 
@@ -44,99 +45,29 @@ ll power(ll a, ll b) //a is base, b is exponent
 
 // Before sub : check for out of bounds , long long , floating point exception(division by zero) ,indexes , 0 , 1
 
-
-
-class DSU {
-
-	int *parent;
-	int *rank;
-public:
-	DSU(int n) {
-		parent = new int[n];
-		rank = new int[n];
-
-		for (int i = 0; i < n; i++) {
-			parent[i] = -1;
-			rank[i] = 1;
-		}
-	}
-
-	int Find(int i) {
-		if (parent[i] == -1) {
-			return i;
-		}
-		return parent[i] = Find(parent[i]);
-	}
-
-	void Union(int x, int y) {
-		int s1 = Find(x);
-		int s2 = Find(y);
-
-		if (s1 != s2) {
-			if (rank[s1] < rank[s2]) {
-				parent[s1] = s2;
-				rank[s2] += rank[s1];
-			}
-			else {
-				parent[s2] = s1;
-				rank[s1] += rank[s2];
-			}
-		}
-	}
-};
-
-class Graph {
-	vector<vector<int>> edgelist;
-	int V;
-public:
-	Graph(int V) {
-		this->V = V;
-	}
-
-	void addEdge(int x, int y, int w) {
-		edgelist.push_back({w, x, y});
-	}
-	int kruskal_mst() {
-		//Main - logi Easy
-		sort(edgelist.begin(), edgelist.end());
-		int ans = 0;
-
-		//INIT dsu
-		DSU s(V);
-
-		for (auto edge : edgelist) {
-			int w = edge[0];
-			int x = edge[1];
-			int y = edge[2];
-
-			// take that edge in MST if it doesn't form a cycle
-
-			if (s.Find(x) != s.Find(y)) {
-				s.Union(x, y);
-				ans += w;
-			}
-
-		}
-
-		return ans;
-	}
-};
-int main()
+int32_t main()
 {
 	boost;
-	int V, E;
-	cin >> V >> E;
-	Graph g(V);
-	vector<vector<int>>edgelist;
+	int t;
+	cin >> t;
+	for (int i = 1; i <= t; i++) {
+		int num;
+		cin >> num;
+		int cnt = 0;
 
-	for (int i = 0; i < E; i++) {
-		int w, x, y;
-		cin >> w >> x >> y;
-		g.addEdge(x, y, w);
+		for (int i = 1; i <= num; i++) {
+			int n = num / i;
+
+			int dif = num - n * i;
+			if (dif == 0) cout << i << endl;
+
+			if (n * (n - 1) / 2 == dif) {
+				watch(i);
+				cnt++;
+			}
+		}
+
+		cout << "Case #" << t << ": " << cnt << endl;
 	}
-
-
-	cout << g.kruskal_mst();
-
 	return 0;
 }

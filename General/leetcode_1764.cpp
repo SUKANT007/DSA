@@ -1,4 +1,3 @@
-
 #include<bits/stdc++.h>
 #include <ext/pb_ds/assoc_container.hpp>
 #include <ext/pb_ds/tree_policy.hpp>
@@ -13,6 +12,7 @@ typedef pair<int, int> pii;
 typedef long long ll;
 
 #define 	INF 1e18
+#define 	endl "\n" // remove for interactive
 #define 	PI 3.1415926535897932384626
 #define 	all(x) x.begin(),x.end()
 #define 	mem(a,b) memset(a,b,sizeof(a))
@@ -44,99 +44,101 @@ ll power(ll a, ll b) //a is base, b is exponent
 
 // Before sub : check for out of bounds , long long , floating point exception(division by zero) ,indexes , 0 , 1
 
+bool check(vector<int> &v, vector<int>&nums, int &i) {
 
+	int idx = 0;
+	for (; i < nums.size(); i++) {
 
-class DSU {
+		//watch(idx);
 
-	int *parent;
-	int *rank;
-public:
-	DSU(int n) {
-		parent = new int[n];
-		rank = new int[n];
+		if (nums[i] == v[idx]) {
+			idx++;
+		}
+		else {
+			idx = 0;
+		}
 
-		for (int i = 0; i < n; i++) {
-			parent[i] = -1;
-			rank[i] = 1;
+		if (idx == v.size()) {
+			i++;
+			//watch(i);
+			return true;
 		}
 	}
 
-	int Find(int i) {
-		if (parent[i] == -1) {
-			return i;
+	return false;
+}
+
+
+bool canChoose(vector<vector<int>>& groups, vector<int>& nums) {
+
+	bool ans = true;
+	int n = nums.size();
+	int i = 0, pos = 0;
+	for (int j = 0; j < groups.size(); j++) {
+
+		if (i < n) {
+			//watch(i);
+			//cout << "------i : " << i << endl;
+			ans = check(groups[j], nums, i);
 		}
-		return parent[i] = Find(parent[i]);
-	}
+		else {
 
-	void Union(int x, int y) {
-		int s1 = Find(x);
-		int s2 = Find(y);
-
-		if (s1 != s2) {
-			if (rank[s1] < rank[s2]) {
-				parent[s1] = s2;
-				rank[s2] += rank[s1];
+			if (j < groups.size()) {
+				ans = false;
+				break;
 			}
-			else {
-				parent[s2] = s1;
-				rank[s1] += rank[s2];
-			}
-		}
-	}
-};
-
-class Graph {
-	vector<vector<int>> edgelist;
-	int V;
-public:
-	Graph(int V) {
-		this->V = V;
-	}
-
-	void addEdge(int x, int y, int w) {
-		edgelist.push_back({w, x, y});
-	}
-	int kruskal_mst() {
-		//Main - logi Easy
-		sort(edgelist.begin(), edgelist.end());
-		int ans = 0;
-
-		//INIT dsu
-		DSU s(V);
-
-		for (auto edge : edgelist) {
-			int w = edge[0];
-			int x = edge[1];
-			int y = edge[2];
-
-			// take that edge in MST if it doesn't form a cycle
-
-			if (s.Find(x) != s.Find(y)) {
-				s.Union(x, y);
-				ans += w;
-			}
-
 		}
 
-		return ans;
+		if (!ans) {
+			break;
+		}
+
 	}
-};
+
+	return ans;
+
+}
+
+
 int main()
 {
 	boost;
-	int V, E;
-	cin >> V >> E;
-	Graph g(V);
-	vector<vector<int>>edgelist;
+	vector<vector<int>>groups;
 
-	for (int i = 0; i < E; i++) {
-		int w, x, y;
-		cin >> w >> x >> y;
-		g.addEdge(x, y, w);
+
+	int n;
+	cin >> n;
+
+	for (int i = 0; i < n; i++) {
+		int m;
+		cin >> m;
+		vector<int> v(m);
+		for (int j = 0; j < m; j++) {
+			cin >> v[j];
+		}
+		groups.push_back(v);
 	}
 
+	cin >> n;
+	vector<int> nums(n);
+	for (int i = 0; i < n; i++) {
+		cin >> nums[i];
+	}
 
-	cout << g.kruskal_mst();
+	// for (auto group : groups) {
+	// 	for (auto val : group) {
+	// 		cout << val << " ";
+	// 	}
+	// 	cout << endl;
+	// }
+
+	// for (auto num : nums) {
+	// 	cout << num << " ";
+	// }
+	// cout << endl;
+
+
+	cout << canChoose(groups, nums);
 
 	return 0;
 }

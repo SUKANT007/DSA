@@ -1,4 +1,3 @@
-
 #include<bits/stdc++.h>
 #include <ext/pb_ds/assoc_container.hpp>
 #include <ext/pb_ds/tree_policy.hpp>
@@ -13,6 +12,7 @@ typedef pair<int, int> pii;
 typedef long long ll;
 
 #define 	INF 1e18
+#define 	endl "\n" // remove for interactive
 #define 	PI 3.1415926535897932384626
 #define 	all(x) x.begin(),x.end()
 #define 	mem(a,b) memset(a,b,sizeof(a))
@@ -45,98 +45,103 @@ ll power(ll a, ll b) //a is base, b is exponent
 // Before sub : check for out of bounds , long long , floating point exception(division by zero) ,indexes , 0 , 1
 
 
+int dx[4] = { -1, 0, 0, 1};
+int dy[4] = {0, 1, -1, 0};
 
-class DSU {
+int orangesRotting(vector<vector<int>>& grid) {
+	queue<pair<int, int>> q;
+	int n = grid.size();
+	int m = grid[0].size();
+	vector<vector<bool>>vis(n, vector<bool>(m, false));
 
-	int *parent;
-	int *rank;
-public:
-	DSU(int n) {
-		parent = new int[n];
-		rank = new int[n];
+	bool flag = false;
 
-		for (int i = 0; i < n; i++) {
-			parent[i] = -1;
-			rank[i] = 1;
-		}
-	}
-
-	int Find(int i) {
-		if (parent[i] == -1) {
-			return i;
-		}
-		return parent[i] = Find(parent[i]);
-	}
-
-	void Union(int x, int y) {
-		int s1 = Find(x);
-		int s2 = Find(y);
-
-		if (s1 != s2) {
-			if (rank[s1] < rank[s2]) {
-				parent[s1] = s2;
-				rank[s2] += rank[s1];
+	for (int i = 0; i < n; i++) {
+		for (int j = 0; j < m; j++) {
+			if (grid[i][j] == 2) {
+				vis[i][j] = true;
+				q.push({i, j});
 			}
-			else {
-				parent[s2] = s1;
-				rank[s1] += rank[s2];
+			if (grid[i][j] == 1) {
+				flag = true;
 			}
 		}
 	}
-};
 
-class Graph {
-	vector<vector<int>> edgelist;
-	int V;
-public:
-	Graph(int V) {
-		this->V = V;
-	}
+	if (!flag) return 0;
 
-	void addEdge(int x, int y, int w) {
-		edgelist.push_back({w, x, y});
-	}
-	int kruskal_mst() {
-		//Main - logi Easy
-		sort(edgelist.begin(), edgelist.end());
-		int ans = 0;
+	int cnt = 0;
 
-		//INIT dsu
-		DSU s(V);
 
-		for (auto edge : edgelist) {
-			int w = edge[0];
-			int x = edge[1];
-			int y = edge[2];
+	while (true) {
+		vector<pair<int, int>> temp;
+		while (!q.empty()) {
+			pair<int, int> coord = q.front();
+			//cout << coord.first << " " << coord.second << endl;
+			q.pop();
+			flag = false;
+			for (int i = 0; i < 4; i++) {
+				int x = dx[i] + coord.first;
+				int y = dy[i] + coord.second;
+				// watch(x);
+				// watch(y);
+				if (x >= 0 && x < n && y >= 0 && y < m && !vis[x][y] && grid[x][y] == 1) {
+					vis[x][y] = true;
+					temp.push_back({x, y});
+					//cout << x << " " << y << endl;
+				}
 
-			// take that edge in MST if it doesn't form a cycle
-
-			if (s.Find(x) != s.Find(y)) {
-				s.Union(x, y);
-				ans += w;
 			}
-
 		}
 
-		return ans;
+
+		if (temp.size() == 0) break;
+		else {
+			for (auto p : temp) {
+				q.push(p);
+			}
+		}
+
+		cnt++;
 	}
-};
+
+
+
+
+	// for (int i = 0; i < n; i++) {
+	// 	for (int j = 0; j < m; j++) {
+	// 		cout << vis[i][j] << " ";
+	// 	}
+	// 	cout << endl;
+	// }
+
+	for (int i = 0; i < n; i++) {
+		for (int j = 0; j < m; j++) {
+			if (grid[i][j] == 1 && !vis[i][j]) {
+				return -1;
+			}
+		}
+	}
+
+	return cnt;
+
+
+}
+
+
 int main()
 {
 	boost;
-	int V, E;
-	cin >> V >> E;
-	Graph g(V);
-	vector<vector<int>>edgelist;
-
-	for (int i = 0; i < E; i++) {
-		int w, x, y;
-		cin >> w >> x >> y;
-		g.addEdge(x, y, w);
+	int n, m;
+	cin >> n >> m;
+	vector<vector<int>> v(n, vector<int>(m));
+	for (int i = 0; i < n; i++) {
+		for (int j = 0; j < m; j++) {
+			cin >> v[i][j];
+		}
 	}
 
-
-	cout << g.kruskal_mst();
+	cout << orangesRotting(v);
 
 	return 0;
 }

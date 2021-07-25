@@ -1,4 +1,3 @@
-
 #include<bits/stdc++.h>
 #include <ext/pb_ds/assoc_container.hpp>
 #include <ext/pb_ds/tree_policy.hpp>
@@ -13,6 +12,7 @@ typedef pair<int, int> pii;
 typedef long long ll;
 
 #define 	INF 1e18
+#define 	endl "\n" // remove for interactive
 #define 	PI 3.1415926535897932384626
 #define 	all(x) x.begin(),x.end()
 #define 	mem(a,b) memset(a,b,sizeof(a))
@@ -45,98 +45,66 @@ ll power(ll a, ll b) //a is base, b is exponent
 // Before sub : check for out of bounds , long long , floating point exception(division by zero) ,indexes , 0 , 1
 
 
+int solve(int i, int n, map<int, vector<int>> &indexes, vector<int> &dp, vector<int> &arr) {
 
-class DSU {
+	if (i == n - 1) return 0;
 
-	int *parent;
-	int *rank;
-public:
-	DSU(int n) {
-		parent = new int[n];
-		rank = new int[n];
+	if (dp[i] != -1) return dp[i];
 
-		for (int i = 0; i < n; i++) {
-			parent[i] = -1;
-			rank[i] = 1;
-		}
+
+
+	int ans = INT_MAX;
+
+	if (i + 1 < n - 1) {
+		ans = min(ans, solve(i + 1, n, indexes, dp, arr) + 1);
 	}
 
-	int Find(int i) {
-		if (parent[i] == -1) {
-			return i;
-		}
-		return parent[i] = Find(parent[i]);
+	if (i - 1 >= 0) {
+		ans = min(ans, solve(i - 1, n, indexes, dp, arr) + 1);
 	}
 
-	void Union(int x, int y) {
-		int s1 = Find(x);
-		int s2 = Find(y);
+	for (auto idx : indexes[arr[i]]) {
+		if (idx != i)
+			ans = min(ans, solve(idx, n, indexes, dp, arr) + 1);
 
-		if (s1 != s2) {
-			if (rank[s1] < rank[s2]) {
-				parent[s1] = s2;
-				rank[s2] += rank[s1];
-			}
-			else {
-				parent[s2] = s1;
-				rank[s1] += rank[s2];
-			}
-		}
-	}
-};
-
-class Graph {
-	vector<vector<int>> edgelist;
-	int V;
-public:
-	Graph(int V) {
-		this->V = V;
 	}
 
-	void addEdge(int x, int y, int w) {
-		edgelist.push_back({w, x, y});
+	return dp[i] = ans;
+
+
+
+}
+
+
+int minJumps(vector<int>& arr) {
+
+
+
+	map<int, vector<int>> indexes;
+	int n = arr.size();
+
+	if (n == 1) return 0;
+
+	for (int i = 0; i < n; i++) {
+		indexes[arr[i]].push_back(i);
 	}
-	int kruskal_mst() {
-		//Main - logi Easy
-		sort(edgelist.begin(), edgelist.end());
-		int ans = 0;
 
-		//INIT dsu
-		DSU s(V);
+	vector<int> dp(n + 1, -1);
 
-		for (auto edge : edgelist) {
-			int w = edge[0];
-			int x = edge[1];
-			int y = edge[2];
+	dp[n - 1] = 0;
+	// dp[n-2] = 1;
 
-			// take that edge in MST if it doesn't form a cycle
+	return solve(0, n, indexes, dp, arr);
 
-			if (s.Find(x) != s.Find(y)) {
-				s.Union(x, y);
-				ans += w;
-			}
+}
 
-		}
-
-		return ans;
-	}
-};
 int main()
 {
 	boost;
-	int V, E;
-	cin >> V >> E;
-	Graph g(V);
-	vector<vector<int>>edgelist;
-
-	for (int i = 0; i < E; i++) {
-		int w, x, y;
-		cin >> w >> x >> y;
-		g.addEdge(x, y, w);
-	}
-
-
-	cout << g.kruskal_mst();
-
+	int n;
+	cin >> n;
+	vector<int> arr(n);
+	rep(i, n) cin >> arr[i];
+	cout << minJumps(arr) << endl;
 	return 0;
 }

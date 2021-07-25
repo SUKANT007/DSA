@@ -1,4 +1,3 @@
-
 #include<bits/stdc++.h>
 #include <ext/pb_ds/assoc_container.hpp>
 #include <ext/pb_ds/tree_policy.hpp>
@@ -13,6 +12,7 @@ typedef pair<int, int> pii;
 typedef long long ll;
 
 #define 	INF 1e18
+#define 	endl "\n" // remove for interactive
 #define 	PI 3.1415926535897932384626
 #define 	all(x) x.begin(),x.end()
 #define 	mem(a,b) memset(a,b,sizeof(a))
@@ -46,97 +46,74 @@ ll power(ll a, ll b) //a is base, b is exponent
 
 
 
-class DSU {
 
-	int *parent;
-	int *rank;
-public:
-	DSU(int n) {
-		parent = new int[n];
-		rank = new int[n];
 
-		for (int i = 0; i < n; i++) {
-			parent[i] = -1;
-			rank[i] = 1;
-		}
-	}
 
-	int Find(int i) {
-		if (parent[i] == -1) {
-			return i;
-		}
-		return parent[i] = Find(parent[i]);
-	}
-
-	void Union(int x, int y) {
-		int s1 = Find(x);
-		int s2 = Find(y);
-
-		if (s1 != s2) {
-			if (rank[s1] < rank[s2]) {
-				parent[s1] = s2;
-				rank[s2] += rank[s1];
-			}
-			else {
-				parent[s2] = s1;
-				rank[s1] += rank[s2];
-			}
-		}
-	}
-};
-
-class Graph {
-	vector<vector<int>> edgelist;
-	int V;
-public:
-	Graph(int V) {
-		this->V = V;
-	}
-
-	void addEdge(int x, int y, int w) {
-		edgelist.push_back({w, x, y});
-	}
-	int kruskal_mst() {
-		//Main - logi Easy
-		sort(edgelist.begin(), edgelist.end());
-		int ans = 0;
-
-		//INIT dsu
-		DSU s(V);
-
-		for (auto edge : edgelist) {
-			int w = edge[0];
-			int x = edge[1];
-			int y = edge[2];
-
-			// take that edge in MST if it doesn't form a cycle
-
-			if (s.Find(x) != s.Find(y)) {
-				s.Union(x, y);
-				ans += w;
-			}
-
-		}
-
-		return ans;
-	}
-};
 int main()
 {
 	boost;
-	int V, E;
-	cin >> V >> E;
-	Graph g(V);
-	vector<vector<int>>edgelist;
-
-	for (int i = 0; i < E; i++) {
-		int w, x, y;
-		cin >> w >> x >> y;
-		g.addEdge(x, y, w);
+	int n;
+	cin >> n;
+	vector<int> arr(n);
+	int sum = 0;
+	rep(i, n) {
+		cin >> arr[i];
+		sum += arr[i];
 	}
 
 
-	cout << g.kruskal_mst();
 
+	int dp[n + 1][sum + 1];
+
+
+	for (int i = 0; i <= n; i++) {
+		for (int j = 0; j <= sum; j++) {
+			if (i == 0) {
+				dp[i][j] = 0;
+			}
+
+			if (j == 0) {
+				dp[i][j] = 1;
+			}
+		}
+	}
+
+	for (int i = 1; i <= n; i++) {
+		for (int j = 1; j <= sum; j++) {
+			if (arr[i - 1] <= j) {
+				dp[i][j] =  (dp[i - 1][j - arr[i - 1]] || dp[i - 1][j]);
+			}
+			else {
+				dp[i][j] = dp[i - 1][j];
+			}
+		}
+	}
+
+	vector<int> v;
+
+	// for (int i = 0; i <= n; i++) {
+	// 	for (int j = 0; j <= sum; j++) {
+	// 		cout << dp[i][j] << " ";
+	// 	}
+	// 	cout << endl;
+	// }
+
+
+	for (int j = 0; j <= sum; j++) {
+		if (dp[n][j]) {
+			v.push_back(j);
+		}
+	}
+
+
+
+	int mn = INT_MAX;
+
+	for (int i = 0; i < v.size(); i++) {
+		mn = min(mn, abs(sum - 2 * v[i]));
+	}
+
+
+	cout << mn << endl;
 	return 0;
 }
