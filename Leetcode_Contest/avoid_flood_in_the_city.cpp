@@ -1,4 +1,3 @@
-
 #include<bits/stdc++.h>
 #include <ext/pb_ds/assoc_container.hpp>
 #include <ext/pb_ds/tree_policy.hpp>
@@ -13,6 +12,7 @@ typedef pair<int, int> pii;
 typedef long long ll;
 
 #define 	INF 1e18
+#define 	endl "\n" // remove for interactive
 #define 	PI 3.1415926535897932384626
 #define 	all(x) x.begin(),x.end()
 #define 	mem(a,b) memset(a,b,sizeof(a))
@@ -44,86 +44,91 @@ ll power(ll a, ll b) //a is base, b is exponent
 
 // Before sub : check for out of bounds , long long , floating point exception(division by zero) ,indexes , 0 , 1
 
-#define N 100005
 
-int disc[N], low[N], tme;
-vector<int> adj[N];
-set<int> art_p;
-vector<pair<int, int>> bridge;
+vector<int> avoidFlood(vector<int>& rains) {
+	stack<pair<int, int>> s;
+	int n = rains.size();
 
-
-void dfs(int node , int par) {
-	disc[node] = low[node] = tme++;
-	int no_child = 0;
-
-	for (auto child : adj[node]) {
-
-		//not visited
-		if (disc[child] == 0) {
-
-			dfs(child, node);
-			no_child++;
-
-			low[node] = min(low[node], low[child]);
-
-			//art point
-			if (par != 0 && low[child] >= disc[node]) {
-				art_p.insert(node);
-			}
-
-			//bridge
-			if (low[child] > disc[node]) {
-				bridge.push_back({node, child});
-			}
-		}
-		else if (child != par) {
-			//found the back edge
-			//cycle
-			low[node] = min(low[node], disc[child]);
-
-		}
+	for (int i = n - 1; i >= 0; i--) {
+		if (rains[i] > 0)
+			s.push({rains[i], i});
 	}
 
-	// separate case for root to be articulation point
+	bool flag = true;
+	unordered_map<int, int> mp;
 
-	if (par == 0 && no_child >= 2) {
-		art_p.insert(node);
+	vector<int> ans(n);
+
+	for (int i = 0; i < n; i++) {
+
+		watch(i);
+
+		if (rains[i] > 0) {
+			if (!mp.count(rains[i]) || mp[rains[i]] == 0) {
+				mp[rains[i]] = 1;
+			}
+			else {
+				flag = false;
+				break;
+			}
+
+			ans[i] = -1;
+			if (s.top().second == i) s.pop();
+		}
+		else {
+
+			unordered_map<int, int>ump;
+
+			bool didwork = false;
+
+			while (!s.empty()) {
+
+				auto p = s.top();
+
+				if (mp[p.first] == 1 || ump[p.first] == 1) {
+					// cout<<i<<endl;
+					mp[p.first] = 0;
+					ans[i] = p.first;
+					s.pop();
+					didwork = true;
+					break;
+				}
+				else {
+					ump[p.first] = 1;
+					s.pop();
+				}
+
+			}
+
+			if (!didwork) ans[i] = 1;
+
+
+		}
+
 	}
-	return;
+
+
+	if (flag) return ans;
+	else return {};
+
+
 }
+
 int main()
 {
 	boost;
-	int n, m;
-	cin >> n >> m;
+	int n;
+	cin >> n;
+	vector<int> v(n);
+	rep(i, n) cin >> v[i];
 
-	for (int i = 0; i < m; i++) {
-		int x, y;
-		cin >> x >> y;
-		adj[x].push_back(y);
-		adj[y].push_back(x);
+	cout << "hee" << endl;
 
-	}
-
-	tme = 1;
-	dfs(1, 0);
-
-	// for (int i = 1; i <= n; i++) {
-	// 	cout << disc[i] << " " << low[i] << endl;
-	// }
+	vector<int> ans = avoidFlood(v);
 
 
-	cout << "articulation points : ";
-	for (auto x : art_p) cout << x << " ";
 
-	cout << endl;
-
-	cout << "bridge edges : " << endl;
-	for (auto edge : bridge) {
-		cout << edge.first << " " << edge.second << endl;
-	}
-
-
+	// for (auto num : ans) cout << num << " ";
 
 
 	return 0;

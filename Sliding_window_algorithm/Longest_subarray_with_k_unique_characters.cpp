@@ -1,4 +1,3 @@
-
 #include<bits/stdc++.h>
 #include <ext/pb_ds/assoc_container.hpp>
 #include <ext/pb_ds/tree_policy.hpp>
@@ -13,6 +12,7 @@ typedef pair<int, int> pii;
 typedef long long ll;
 
 #define 	INF 1e18
+#define 	endl "\n" // remove for interactive
 #define 	PI 3.1415926535897932384626
 #define 	all(x) x.begin(),x.end()
 #define 	mem(a,b) memset(a,b,sizeof(a))
@@ -44,87 +44,47 @@ ll power(ll a, ll b) //a is base, b is exponent
 
 // Before sub : check for out of bounds , long long , floating point exception(division by zero) ,indexes , 0 , 1
 
-#define N 100005
 
-int disc[N], low[N], tme;
-vector<int> adj[N];
-set<int> art_p;
-vector<pair<int, int>> bridge;
+int longestKSubstr(string s, int k) {
+	unordered_map<char, int> mp;
+	int start = 0 , ans = 0 , unique = 0;
+	for (int i = 0; i < s.length(); i++) {
 
-
-void dfs(int node , int par) {
-	disc[node] = low[node] = tme++;
-	int no_child = 0;
-
-	for (auto child : adj[node]) {
-
-		//not visited
-		if (disc[child] == 0) {
-
-			dfs(child, node);
-			no_child++;
-
-			low[node] = min(low[node], low[child]);
-
-			//art point
-			if (par != 0 && low[child] >= disc[node]) {
-				art_p.insert(node);
-			}
-
-			//bridge
-			if (low[child] > disc[node]) {
-				bridge.push_back({node, child});
-			}
+		if (mp[s[i]] == 0) {
+			unique++;
 		}
-		else if (child != par) {
-			//found the back edge
-			//cycle
-			low[node] = min(low[node], disc[child]);
 
+		mp[s[i]]++;
+
+		while (unique > k) {
+			if (mp[s[start]] == 1) {
+				unique--;
+			}
+			mp[s[start]] -= 1;
+			start++;
 		}
+
+		if (unique == k) {
+			ans = max(ans, i - start + 1);
+		}
+
+		// watch(start);
+		// cout << s[i] << " " << ans << endl;
+
 	}
 
-	// separate case for root to be articulation point
-
-	if (par == 0 && no_child >= 2) {
-		art_p.insert(node);
-	}
-	return;
+	return ans;
 }
+
+
 int main()
 {
 	boost;
-	int n, m;
-	cin >> n >> m;
+	string s;
+	int k;
+	cin >> s;
+	cin >> k;
 
-	for (int i = 0; i < m; i++) {
-		int x, y;
-		cin >> x >> y;
-		adj[x].push_back(y);
-		adj[y].push_back(x);
-
-	}
-
-	tme = 1;
-	dfs(1, 0);
-
-	// for (int i = 1; i <= n; i++) {
-	// 	cout << disc[i] << " " << low[i] << endl;
-	// }
-
-
-	cout << "articulation points : ";
-	for (auto x : art_p) cout << x << " ";
-
-	cout << endl;
-
-	cout << "bridge edges : " << endl;
-	for (auto edge : bridge) {
-		cout << edge.first << " " << edge.second << endl;
-	}
-
-
-
-
+	cout << longestKSubstr(s, k) << endl;
 	return 0;
 }

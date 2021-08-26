@@ -1,4 +1,3 @@
-
 #include<bits/stdc++.h>
 #include <ext/pb_ds/assoc_container.hpp>
 #include <ext/pb_ds/tree_policy.hpp>
@@ -13,6 +12,7 @@ typedef pair<int, int> pii;
 typedef long long ll;
 
 #define 	INF 1e18
+#define 	endl "\n" // remove for interactive
 #define 	PI 3.1415926535897932384626
 #define 	all(x) x.begin(),x.end()
 #define 	mem(a,b) memset(a,b,sizeof(a))
@@ -31,100 +31,62 @@ typedef long long ll;
 
 typedef tree<int, null_type, less<int>, rb_tree_tag, tree_order_statistics_node_update> PBDS;
 
-ll mod;
+
 ll power(ll a, ll b) //a is base, b is exponent
 {
 	if (b == 0)
 		return 1;
 	if (b % 2 == 1)
-		return (power(a, b - 1) * a) % mod;
+		return (power(a, b - 1) * a);
 	int q = power(a, b / 2);
-	return (q * q) % mod;
+	return (q * q);
 }
 
 // Before sub : check for out of bounds , long long , floating point exception(division by zero) ,indexes , 0 , 1
 
-#define N 100005
-
-int disc[N], low[N], tme;
-vector<int> adj[N];
-set<int> art_p;
-vector<pair<int, int>> bridge;
-
-
-void dfs(int node , int par) {
-	disc[node] = low[node] = tme++;
-	int no_child = 0;
-
-	for (auto child : adj[node]) {
-
-		//not visited
-		if (disc[child] == 0) {
-
-			dfs(child, node);
-			no_child++;
-
-			low[node] = min(low[node], low[child]);
-
-			//art point
-			if (par != 0 && low[child] >= disc[node]) {
-				art_p.insert(node);
-			}
-
-			//bridge
-			if (low[child] > disc[node]) {
-				bridge.push_back({node, child});
-			}
-		}
-		else if (child != par) {
-			//found the back edge
-			//cycle
-			low[node] = min(low[node], disc[child]);
-
-		}
-	}
-
-	// separate case for root to be articulation point
-
-	if (par == 0 && no_child >= 2) {
-		art_p.insert(node);
-	}
-	return;
-}
 int main()
 {
 	boost;
-	int n, m;
-	cin >> n >> m;
+	int t;
+	cin >> t;
+	while (t--) {
+		ll n, x;
+		cin >> n >> x;
 
-	for (int i = 0; i < m; i++) {
-		int x, y;
-		cin >> x >> y;
-		adj[x].push_back(y);
-		adj[y].push_back(x);
+		ll p = (ll)log2(n);
+
+		int cnt = 0;
+		bool flag = true;
+
+
+		if ((n & 1) && x == 0) {
+			cout << -1 << endl;
+			continue;
+		}
+
+		while (n) {
+
+			ll p = (ll)log2(n);
+
+			if (n <= x) {
+				cnt += 1;
+				break;
+			}
+
+			n -= power(2, p);
+
+			if (p & 1) cnt++;
+			else cnt += 2;
+
+
+		}
+
+
+		cout << cnt << endl;
+
+
+
 
 	}
-
-	tme = 1;
-	dfs(1, 0);
-
-	// for (int i = 1; i <= n; i++) {
-	// 	cout << disc[i] << " " << low[i] << endl;
-	// }
-
-
-	cout << "articulation points : ";
-	for (auto x : art_p) cout << x << " ";
-
-	cout << endl;
-
-	cout << "bridge edges : " << endl;
-	for (auto edge : bridge) {
-		cout << edge.first << " " << edge.second << endl;
-	}
-
-
-
-
 	return 0;
 }

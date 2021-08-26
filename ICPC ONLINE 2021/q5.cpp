@@ -1,4 +1,3 @@
-
 #include<bits/stdc++.h>
 #include <ext/pb_ds/assoc_container.hpp>
 #include <ext/pb_ds/tree_policy.hpp>
@@ -13,6 +12,7 @@ typedef pair<int, int> pii;
 typedef long long ll;
 
 #define 	INF 1e18
+#define 	endl "\n" // remove for interactive
 #define 	PI 3.1415926535897932384626
 #define 	all(x) x.begin(),x.end()
 #define 	mem(a,b) memset(a,b,sizeof(a))
@@ -44,87 +44,41 @@ ll power(ll a, ll b) //a is base, b is exponent
 
 // Before sub : check for out of bounds , long long , floating point exception(division by zero) ,indexes , 0 , 1
 
-#define N 100005
-
-int disc[N], low[N], tme;
-vector<int> adj[N];
-set<int> art_p;
-vector<pair<int, int>> bridge;
-
-
-void dfs(int node , int par) {
-	disc[node] = low[node] = tme++;
-	int no_child = 0;
-
-	for (auto child : adj[node]) {
-
-		//not visited
-		if (disc[child] == 0) {
-
-			dfs(child, node);
-			no_child++;
-
-			low[node] = min(low[node], low[child]);
-
-			//art point
-			if (par != 0 && low[child] >= disc[node]) {
-				art_p.insert(node);
-			}
-
-			//bridge
-			if (low[child] > disc[node]) {
-				bridge.push_back({node, child});
-			}
-		}
-		else if (child != par) {
-			//found the back edge
-			//cycle
-			low[node] = min(low[node], disc[child]);
-
-		}
-	}
-
-	// separate case for root to be articulation point
-
-	if (par == 0 && no_child >= 2) {
-		art_p.insert(node);
-	}
-	return;
-}
 int main()
 {
 	boost;
-	int n, m;
-	cin >> n >> m;
+	int t;
+	cin >> t;
+	while (t--) {
+		int n;
+		cin >> n;
+		vector<int> v(n);
+		rep(i, n)  cin >> v[i];
 
-	for (int i = 0; i < m; i++) {
-		int x, y;
-		cin >> x >> y;
-		adj[x].push_back(y);
-		adj[y].push_back(x);
+
+		vector<int> subsets;
+		int sum = 0;
+
+		for (int len = 1 ; len <= n; len++) {
+			for (int i = 0; i <=  n - len; i++) {
+				int j = i + len - 1 ;
+				int x = 0;
+				for (int k = i; k <= j; k++) {
+					x ^= v[k];
+				}
+
+				subsets.push_back(x);
+				sum += x;
+			}
+		}
+
+		cout << sum << endl;
+
+
+		for (int i = 0; i < subsets.size(); i++) {
+			binary(subsets[i]);
+		}
 
 	}
-
-	tme = 1;
-	dfs(1, 0);
-
-	// for (int i = 1; i <= n; i++) {
-	// 	cout << disc[i] << " " << low[i] << endl;
-	// }
-
-
-	cout << "articulation points : ";
-	for (auto x : art_p) cout << x << " ";
-
-	cout << endl;
-
-	cout << "bridge edges : " << endl;
-	for (auto edge : bridge) {
-		cout << edge.first << " " << edge.second << endl;
-	}
-
-
-
-
 	return 0;
 }
