@@ -44,87 +44,55 @@ ll power(ll a, ll b) //a is base, b is exponent
 
 // Before sub : check for out of bounds , long long , floating point exception(division by zero) ,indexes , 0 , 1
 
+bool isAssignmentPossible(vector<unsigned long long> &stalls, unsigned long long minDist, unsigned long long cows) {
+	unsigned long long assignedCows = 1;
+	unsigned long long cowPos = stalls[0];
 
-bool subset_sum(int idx, int target, int cur_size, vector<int> &set1, vector<vector<vector<bool>>> &dp, vector<int> &nums) {
-	if (cur_size == 0) return (target == 0);
+	for (int i = 1; i < stalls.size(); i++) {
+		if (stalls[i] - cowPos >= minDist) {
+			assignedCows++;
+			cowPos = stalls[i];
+		}
 
-	if (idx == nums.size()) {
-		return false;
-	}
-
-	if (dp[idx][target][cur_size]  == false ) return false;
-
-	if (nums[idx] <= target) {
-		set1.push_back(nums[idx]);
-		if (subset_sum(idx + 1, target - nums[idx], cur_size - 1, set1, dp, nums)) {
+		if (assignedCows >= cows) {
 			return true;
 		}
-		set1.pop_back();
 	}
 
-	if (subset_sum(idx + 1, target, cur_size, set1, dp, nums)) {
-		return true;
-	}
-	return dp[idx][target][cur_size] = false;
-}
-
-
-vector<vector<int> > avgset(vector<int> &nums) {
-
-	int n = nums.size();
-	int sum = 0;
-	for (auto num : nums) sum += num;
-
-	vector<vector<vector<bool>>> dp (n, vector<vector<bool>>(sum + 1, vector<bool>(n, true)));
-
-	sort(nums.begin(), nums.end());
-
-	vector<vector<int>> res;
-
-	for (int n1 = 1; n1 <= n / 2; n1++) {
-
-		if ((sum * n1) % n == 0) {
-			int  sum1 = (sum * n1) / n;
-			vector<int> set1;
-			if (subset_sum(0, sum1, n1, set1, dp, nums)) {
-
-				vector<int> set2;
-				int p1 = 0, p2 = 0;
-
-				while (p1 < n1 || p2 < n) {
-					if (p1 < n1 && set1[p1] == nums[p2]) {
-						p1++;
-						p2++;
-					}
-					else {
-						set2.push_back(nums[p2]);
-						p2++;
-					}
-				}
-				res.push_back(set1);
-				res.push_back(set2);
-
-				return res;
-			}
-		}
-	}
-	return res;
+	return false;
 }
 
 int main()
 {
 	boost;
-	int n;
-	cin >> n;
-	vector<int> A(n);
-	rep(i, n) cin >> A[i];
-	vector<vector<int>> sol = avgset(A);
+	unsigned long long t;
+	cin >> t;
+	while (t--) {
+		unsigned long long N, C;
+		cin >> N >> C;
 
-	for (auto Set : sol) {
-		for (auto it : Set) {
-			cout << it << " ";
+		vector<unsigned long long> stalls(N);
+
+		for (unsigned long long i = 0; i < N; i++) {
+			cin >> stalls[i];
 		}
-		cout << endl;
+
+		sort(stalls.begin(), stalls.end());
+
+		unsigned long long low = 1, high = stalls[N - 1] - stalls[0];
+
+		while (low <= high) {
+			unsigned long long mid = low + (high - low) / 2;
+
+			if (isAssignmentPossible(stalls, mid, C)) {
+				low = mid + 1;
+			} else {
+				high = mid - 1;
+			}
+		}
+
+		cout << high << endl;
 	}
+
 	return 0;
 }

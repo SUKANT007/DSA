@@ -44,87 +44,47 @@ ll power(ll a, ll b) //a is base, b is exponent
 
 // Before sub : check for out of bounds , long long , floating point exception(division by zero) ,indexes , 0 , 1
 
+int books(vector<int> &A, int B) {
 
-bool subset_sum(int idx, int target, int cur_size, vector<int> &set1, vector<vector<vector<bool>>> &dp, vector<int> &nums) {
-	if (cur_size == 0) return (target == 0);
-
-	if (idx == nums.size()) {
-		return false;
-	}
-
-	if (dp[idx][target][cur_size]  == false ) return false;
-
-	if (nums[idx] <= target) {
-		set1.push_back(nums[idx]);
-		if (subset_sum(idx + 1, target - nums[idx], cur_size - 1, set1, dp, nums)) {
-			return true;
-		}
-		set1.pop_back();
-	}
-
-	if (subset_sum(idx + 1, target, cur_size, set1, dp, nums)) {
-		return true;
-	}
-	return dp[idx][target][cur_size] = false;
-}
-
-
-vector<vector<int> > avgset(vector<int> &nums) {
-
-	int n = nums.size();
-	int sum = 0;
-	for (auto num : nums) sum += num;
-
-	vector<vector<vector<bool>>> dp (n, vector<vector<bool>>(sum + 1, vector<bool>(n, true)));
-
-	sort(nums.begin(), nums.end());
-
-	vector<vector<int>> res;
-
-	for (int n1 = 1; n1 <= n / 2; n1++) {
-
-		if ((sum * n1) % n == 0) {
-			int  sum1 = (sum * n1) / n;
-			vector<int> set1;
-			if (subset_sum(0, sum1, n1, set1, dp, nums)) {
-
-				vector<int> set2;
-				int p1 = 0, p2 = 0;
-
-				while (p1 < n1 || p2 < n) {
-					if (p1 < n1 && set1[p1] == nums[p2]) {
-						p1++;
-						p2++;
-					}
-					else {
-						set2.push_back(nums[p2]);
-						p2++;
-					}
+	if (B > A.size()) return -1;
+	long long low = 0, high = 1e11;
+	while (low <= high) {
+		long long mid = low + (high - low) / 2, cnt = 1, temp = 0;
+		for (int i = 0; i < A.size(); i++) {
+			if (temp + A[i] <= mid) {
+				temp += A[i];
+			}
+			else {
+				cnt++;
+				temp = A[i];
+				if (A[i] > mid) {
+					cnt = INT_MAX;
+					break;
 				}
-				res.push_back(set1);
-				res.push_back(set2);
-
-				return res;
 			}
 		}
+		if (cnt <= B) {
+			high = mid - 1;
+		}
+		else {
+			low = mid + 1;
+		}
 	}
-	return res;
+
+	return low;
+
 }
+
 
 int main()
 {
 	boost;
-	int n;
-	cin >> n;
-	vector<int> A(n);
-	rep(i, n) cin >> A[i];
-	vector<vector<int>> sol = avgset(A);
+	int n , b;
+	cin >> n >> b;
+	vector<int> v(n);
+	rep(i, n) cin >> v[i];
 
-	for (auto Set : sol) {
-		for (auto it : Set) {
-			cout << it << " ";
-		}
-		cout << endl;
-	}
+	cout << books(v, b);
+
 	return 0;
 }

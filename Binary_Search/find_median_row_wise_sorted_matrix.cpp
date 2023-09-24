@@ -37,6 +37,7 @@ ll power(ll a, ll b) //a is base, b is exponent
 	if (b == 0)
 		return 1;
 	if (b % 2 == 1)
+
 		return (power(a, b - 1) * a) % mod;
 	int q = power(a, b / 2);
 	return (q * q) % mod;
@@ -45,86 +46,97 @@ ll power(ll a, ll b) //a is base, b is exponent
 // Before sub : check for out of bounds , long long , floating point exception(division by zero) ,indexes , 0 , 1
 
 
-bool subset_sum(int idx, int target, int cur_size, vector<int> &set1, vector<vector<vector<bool>>> &dp, vector<int> &nums) {
-	if (cur_size == 0) return (target == 0);
+int countSmallerThanEqualToMid(vector<int> &row, int mid) {
 
-	if (idx == nums.size()) {
-		return false;
-	}
+	int l = 0, h = row.size() - 1;
 
-	if (dp[idx][target][cur_size]  == false ) return false;
-
-	if (nums[idx] <= target) {
-		set1.push_back(nums[idx]);
-		if (subset_sum(idx + 1, target - nums[idx], cur_size - 1, set1, dp, nums)) {
-			return true;
+	while (l <= h) {
+		int md = (l + h) >> 1;
+		if (row[md] <= mid) {
+			l = md + 1;
 		}
-		set1.pop_back();
+		else {
+			h = md - 1;
+		}
 	}
 
-	if (subset_sum(idx + 1, target, cur_size, set1, dp, nums)) {
-		return true;
-	}
-	return dp[idx][target][cur_size] = false;
+	return l;
+
 }
 
 
-vector<vector<int> > avgset(vector<int> &nums) {
+int findMedian(vector<vector<int> > &A) {
 
-	int n = nums.size();
-	int sum = 0;
-	for (auto num : nums) sum += num;
+	int low = 1,  high = 1e9;
+	int n = A.size();
+	int m = A[0].size();
 
-	vector<vector<vector<bool>>> dp (n, vector<vector<bool>>(sum + 1, vector<bool>(n, true)));
+	while (low <= high) {
+		int mid = (low + high) >> 1;
+		int cnt = 0;
 
-	sort(nums.begin(), nums.end());
+		for (int i = 0; i < n; i++) {
+			cnt += countSmallerThanEqualToMid(A[i], mid);
+		}
 
-	vector<vector<int>> res;
-
-	for (int n1 = 1; n1 <= n / 2; n1++) {
-
-		if ((sum * n1) % n == 0) {
-			int  sum1 = (sum * n1) / n;
-			vector<int> set1;
-			if (subset_sum(0, sum1, n1, set1, dp, nums)) {
-
-				vector<int> set2;
-				int p1 = 0, p2 = 0;
-
-				while (p1 < n1 || p2 < n) {
-					if (p1 < n1 && set1[p1] == nums[p2]) {
-						p1++;
-						p2++;
-					}
-					else {
-						set2.push_back(nums[p2]);
-						p2++;
-					}
-				}
-				res.push_back(set1);
-				res.push_back(set2);
-
-				return res;
-			}
+		if (cnt <= (n * m) / 2) {
+			low = mid + 1;
+		}
+		else {
+			high = mid - 1;
 		}
 	}
-	return res;
+
+	return low;
 }
+
+
+// int countSmallerThanMid(vector<int> &row, int mid) {
+// 	int l = 0, h = row.size() - 1;
+// 	while (l <= h) {
+// 		int md = (l + h) >> 1;
+// 		if (row[md] <= mid) {
+// 			l = md + 1;
+// 		}
+// 		else {
+// 			h = md - 1;
+// 		}
+// 	}
+// 	return l;
+// }
+// int findMedian(vector<vector<int> > &A) {
+// 	int low = 1;
+// 	int high = 1e9;
+// 	int n = A.size();
+// 	int m = A[0].size();
+// 	while (low <= high) {
+// 		int mid = (low + high) >> 1;
+// 		int cnt = 0;
+// 		for (int i = 0; i < n; i++) {
+// 			cnt += countSmallerThanMid(A[i], mid);
+// 		}
+
+// 		if (cnt <= (n * m) / 2) low = mid + 1;
+// 		else high = mid - 1;
+// 	}
+// 	return low;
+// }
 
 int main()
 {
 	boost;
-	int n;
-	cin >> n;
-	vector<int> A(n);
-	rep(i, n) cin >> A[i];
-	vector<vector<int>> sol = avgset(A);
-
-	for (auto Set : sol) {
-		for (auto it : Set) {
-			cout << it << " ";
+	int n, m;
+	cin >> n >> m;
+	vector<vector<int>>matrix(n, vector<int>(m, 0));
+	for (int i = 0; i < n; i++) {
+		for (int j = 0; j < m; j++) {
+			cin >> matrix[i][j];
 		}
-		cout << endl;
 	}
+
+
+	cout << findMedian(matrix);
+
+
 	return 0;
 }

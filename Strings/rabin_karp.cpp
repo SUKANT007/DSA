@@ -45,86 +45,85 @@ ll power(ll a, ll b) //a is base, b is exponent
 // Before sub : check for out of bounds , long long , floating point exception(division by zero) ,indexes , 0 , 1
 
 
-bool subset_sum(int idx, int target, int cur_size, vector<int> &set1, vector<vector<vector<bool>>> &dp, vector<int> &nums) {
-	if (cur_size == 0) return (target == 0);
+int base = 31;
 
-	if (idx == nums.size()) {
-		return false;
+vector<long long> powers;
+
+
+void preComputePowers(int n) {
+	powers.resize(n);
+
+	powers[0] = 1;
+
+	for (int i = 1; i < n; i++) {
+		powers[i] = (powers[i - 1] * base) % mod;
+	}
+}
+
+vector<long long> findHash(string &s) {
+	int n = (int)s.length();
+	vector<long long> hash(n + 1, 0);
+
+	for (int i = 0; i < n; i++) {
+		hash[i + 1] = (hash[i] + (s[i] - 'a' + 1) * powers[i]) % mod;
 	}
 
-	if (dp[idx][target][cur_size]  == false ) return false;
+	return hash;
+}
 
-	if (nums[idx] <= target) {
-		set1.push_back(nums[idx]);
-		if (subset_sum(idx + 1, target - nums[idx], cur_size - 1, set1, dp, nums)) {
-			return true;
+vector<int> rabin_karp_findOccurences(string &pattern, string &text) {
+	vector<int> occurences;
+
+	long long h_pattern = 0;
+	int patternLen = (int)pattern.length();
+	int textLen = (int)text.length();
+
+	preComputePowers(max(patternLen, textLen));
+
+	for (int i = 0; i < patternLen; i++) {
+		h_pattern = (h_pattern + (pattern[i] - 'a' + 1) * powers[i]) % mod;
+	}
+
+	vector<long long> h_text = findHash(text);
+
+	for (int i = 0; i < (i + patternLen - 1) < textLen; i++) {
+		long long substringHash = (h_text[i + patternLen] + mod - h_text[i]) % mod;
+
+		if (substringHash == ((h_pattern * powers[i]) % mod) ) {
+			occurences.push_back(i);
 		}
-		set1.pop_back();
 	}
 
-	if (subset_sum(idx + 1, target, cur_size, set1, dp, nums)) {
-		return true;
-	}
-	return dp[idx][target][cur_size] = false;
+	return occurences;
 }
 
 
-vector<vector<int> > avgset(vector<int> &nums) {
-
-	int n = nums.size();
-	int sum = 0;
-	for (auto num : nums) sum += num;
-
-	vector<vector<vector<bool>>> dp (n, vector<vector<bool>>(sum + 1, vector<bool>(n, true)));
-
-	sort(nums.begin(), nums.end());
-
-	vector<vector<int>> res;
-
-	for (int n1 = 1; n1 <= n / 2; n1++) {
-
-		if ((sum * n1) % n == 0) {
-			int  sum1 = (sum * n1) / n;
-			vector<int> set1;
-			if (subset_sum(0, sum1, n1, set1, dp, nums)) {
-
-				vector<int> set2;
-				int p1 = 0, p2 = 0;
-
-				while (p1 < n1 || p2 < n) {
-					if (p1 < n1 && set1[p1] == nums[p2]) {
-						p1++;
-						p2++;
-					}
-					else {
-						set2.push_back(nums[p2]);
-						p2++;
-					}
-				}
-				res.push_back(set1);
-				res.push_back(set2);
-
-				return res;
-			}
-		}
-	}
-	return res;
-}
 
 int main()
 {
 	boost;
-	int n;
-	cin >> n;
-	vector<int> A(n);
-	rep(i, n) cin >> A[i];
-	vector<vector<int>> sol = avgset(A);
+	string text, pattern;
 
-	for (auto Set : sol) {
-		for (auto it : Set) {
-			cout << it << " ";
-		}
-		cout << endl;
+	// getline(cin, text);
+	// getline(cin, pattern);
+
+	//cin >> text >> pattern;
+
+	text = "i am there for you, i can go on and on";
+	pattern = "o";
+
+	cout << text << endl;
+	cout << pattern << endl;
+
+	mod = 1e9 + 7;
+
+	vector<int> occurences = rabin_karp_findOccurences(pattern, text);
+
+	for (auto &occurence : occurences) {
+		cout << occurence << " ";
 	}
+
+	cout << endl;
+
 	return 0;
 }

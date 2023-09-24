@@ -45,86 +45,68 @@ ll power(ll a, ll b) //a is base, b is exponent
 // Before sub : check for out of bounds , long long , floating point exception(division by zero) ,indexes , 0 , 1
 
 
-bool subset_sum(int idx, int target, int cur_size, vector<int> &set1, vector<vector<vector<bool>>> &dp, vector<int> &nums) {
-	if (cur_size == 0) return (target == 0);
 
-	if (idx == nums.size()) {
-		return false;
+
+
+struct triplet
+{
+	int x, y, gcd;
+
+};
+
+
+
+triplet extendEuclid(int a, int b) {
+	if (b == 0) {
+		return triplet{
+x: 1, y: 0, gcd: a,
+		};
 	}
 
-	if (dp[idx][target][cur_size]  == false ) return false;
 
-	if (nums[idx] <= target) {
-		set1.push_back(nums[idx]);
-		if (subset_sum(idx + 1, target - nums[idx], cur_size - 1, set1, dp, nums)) {
-			return true;
-		}
-		set1.pop_back();
-	}
+	triplet subAns = extendEuclid(b, a % b);
 
-	if (subset_sum(idx + 1, target, cur_size, set1, dp, nums)) {
-		return true;
-	}
-	return dp[idx][target][cur_size] = false;
+	triplet ans;
+
+	ans.gcd = subAns.gcd;
+	ans.x = subAns.y;
+	ans.y = subAns.x - (a / b) * subAns.y;
+
+	return ans;
 }
 
 
-vector<vector<int> > avgset(vector<int> &nums) {
 
-	int n = nums.size();
-	int sum = 0;
-	for (auto num : nums) sum += num;
 
-	vector<vector<vector<bool>>> dp (n, vector<vector<bool>>(sum + 1, vector<bool>(n, true)));
-
-	sort(nums.begin(), nums.end());
-
-	vector<vector<int>> res;
-
-	for (int n1 = 1; n1 <= n / 2; n1++) {
-
-		if ((sum * n1) % n == 0) {
-			int  sum1 = (sum * n1) / n;
-			vector<int> set1;
-			if (subset_sum(0, sum1, n1, set1, dp, nums)) {
-
-				vector<int> set2;
-				int p1 = 0, p2 = 0;
-
-				while (p1 < n1 || p2 < n) {
-					if (p1 < n1 && set1[p1] == nums[p2]) {
-						p1++;
-						p2++;
-					}
-					else {
-						set2.push_back(nums[p2]);
-						p2++;
-					}
-				}
-				res.push_back(set1);
-				res.push_back(set2);
-
-				return res;
-			}
-		}
-	}
-	return res;
-}
 
 int main()
 {
 	boost;
-	int n;
-	cin >> n;
-	vector<int> A(n);
-	rep(i, n) cin >> A[i];
-	vector<vector<int>> sol = avgset(A);
 
-	for (auto Set : sol) {
-		for (auto it : Set) {
-			cout << it << " ";
-		}
-		cout << endl;
-	}
+	int a, b;
+	cin >> a >> b;
+
+	triplet ans = extendEuclid(a, b);
+
+	cout << "x: " << ans.x << " y: " << ans.y << " gcd: " << ans.gcd << endl;
+
+
+// ax + by = gcd(a,b)
+
+// property of gcd: gcd(a,b) = gcd(b,a%b)
+
+// base case b = 0
+// ax = a
+// x = 1
+
+
+// Note: gcd(x,0) = x
+
+
+// x = y1
+// y = x1 - (a/b)*y1
+
+
+
 	return 0;
 }

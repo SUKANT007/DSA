@@ -45,86 +45,45 @@ ll power(ll a, ll b) //a is base, b is exponent
 // Before sub : check for out of bounds , long long , floating point exception(division by zero) ,indexes , 0 , 1
 
 
-bool subset_sum(int idx, int target, int cur_size, vector<int> &set1, vector<vector<vector<bool>>> &dp, vector<int> &nums) {
-	if (cur_size == 0) return (target == 0);
+struct triplet {
+	int x, y, gcd;
+};
 
-	if (idx == nums.size()) {
-		return false;
+triplet extendedEuclid(int a, int b) {
+	if (b == 0) {
+		triplet ans;
+		ans.x = 1;
+		ans.gcd = a;
+		ans.y = 0;
+
+		return ans;
 	}
 
-	if (dp[idx][target][cur_size]  == false ) return false;
+	triplet subAns = extendedEuclid(b, a % b);
 
-	if (nums[idx] <= target) {
-		set1.push_back(nums[idx]);
-		if (subset_sum(idx + 1, target - nums[idx], cur_size - 1, set1, dp, nums)) {
-			return true;
-		}
-		set1.pop_back();
-	}
+	triplet ans;
 
-	if (subset_sum(idx + 1, target, cur_size, set1, dp, nums)) {
-		return true;
-	}
-	return dp[idx][target][cur_size] = false;
+	ans.x = subAns.y;
+	ans.y = subAns.x - (a / b) * subAns.y;
+
+	return ans;
 }
 
 
-vector<vector<int> > avgset(vector<int> &nums) {
+int multiplicativeModuloInverse(int a, int m) {
+	triplet temp = extendedEuclid(a, m);
 
-	int n = nums.size();
-	int sum = 0;
-	for (auto num : nums) sum += num;
-
-	vector<vector<vector<bool>>> dp (n, vector<vector<bool>>(sum + 1, vector<bool>(n, true)));
-
-	sort(nums.begin(), nums.end());
-
-	vector<vector<int>> res;
-
-	for (int n1 = 1; n1 <= n / 2; n1++) {
-
-		if ((sum * n1) % n == 0) {
-			int  sum1 = (sum * n1) / n;
-			vector<int> set1;
-			if (subset_sum(0, sum1, n1, set1, dp, nums)) {
-
-				vector<int> set2;
-				int p1 = 0, p2 = 0;
-
-				while (p1 < n1 || p2 < n) {
-					if (p1 < n1 && set1[p1] == nums[p2]) {
-						p1++;
-						p2++;
-					}
-					else {
-						set2.push_back(nums[p2]);
-						p2++;
-					}
-				}
-				res.push_back(set1);
-				res.push_back(set2);
-
-				return res;
-			}
-		}
-	}
-	return res;
+	return temp.x;
 }
 
 int main()
 {
 	boost;
-	int n;
-	cin >> n;
-	vector<int> A(n);
-	rep(i, n) cin >> A[i];
-	vector<vector<int>> sol = avgset(A);
 
-	for (auto Set : sol) {
-		for (auto it : Set) {
-			cout << it << " ";
-		}
-		cout << endl;
-	}
+	int a, m;
+	cin >> a >> m;
+
+	cout << multiplicativeModuloInverse(a, m) << endl;
+
 	return 0;
 }
