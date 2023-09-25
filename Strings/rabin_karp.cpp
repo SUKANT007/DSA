@@ -1,8 +1,5 @@
 #include<bits/stdc++.h>
-#include <ext/pb_ds/assoc_container.hpp>
-#include <ext/pb_ds/tree_policy.hpp>
 
-using namespace __gnu_pbds;
 using namespace std;
 
 #define boost ios_base::sync_with_stdio(0);cin.tie(0);cout.tie(0); // remove for interactive
@@ -28,8 +25,6 @@ typedef long long ll;
 #define 	tr(container,it) for(auto it=container.begin();it!=container.end();it++)
 #define 	present(container, element) (container.find(element) != container.end())
 #define 	vpresent(container, element) (find(all(container),element) != container.end())//for vectors
-
-typedef tree<int, null_type, less<int>, rb_tree_tag, tree_order_statistics_node_update> PBDS;
 
 ll mod;
 ll power(ll a, ll b) //a is base, b is exponent
@@ -60,7 +55,7 @@ void preComputePowers(int n) {
 	}
 }
 
-vector<long long> findHash(string &s) {
+vector<long long> findHash(string& s) {
 	int n = (int)s.length();
 	vector<long long> hash(n + 1, 0);
 
@@ -71,7 +66,7 @@ vector<long long> findHash(string &s) {
 	return hash;
 }
 
-vector<int> rabin_karp_findOccurences(string &pattern, string &text) {
+vector<int> rabin_karp_findOccurences(string& pattern, string& text) {
 	vector<int> occurences;
 
 	long long h_pattern = 0;
@@ -86,10 +81,10 @@ vector<int> rabin_karp_findOccurences(string &pattern, string &text) {
 
 	vector<long long> h_text = findHash(text);
 
-	for (int i = 0; i < (i + patternLen - 1) < textLen; i++) {
+	for (int i = 0; (i + patternLen - 1) < textLen; i++) {
 		long long substringHash = (h_text[i + patternLen] + mod - h_text[i]) % mod;
 
-		if (substringHash == ((h_pattern * powers[i]) % mod) ) {
+		if (substringHash == ((h_pattern * powers[i]) % mod)) {
 			occurences.push_back(i);
 		}
 	}
@@ -119,7 +114,7 @@ int main()
 
 	vector<int> occurences = rabin_karp_findOccurences(pattern, text);
 
-	for (auto &occurence : occurences) {
+	for (auto& occurence : occurences) {
 		cout << occurence << " ";
 	}
 
